@@ -21,7 +21,7 @@ folder_path = 'C:\Users\almud\Desktop\UNIVERSIDAD\4ºGIB\TFG\gyroData\gyroDataNe
 % %SOLO LO ESTOY HACIENDO AQUI QUE EN LA CARPETA HAY SOLO ANDAR, PARA LUEGO
 % %DIVIDIR PUEDE VENIR BIEN EL MKDIR con parentfolder y lo otro
 % % Obtener lista de archivos csv en el directorio
-files = dir(fullfile(folder_path, '*.csv'));
+files = dir(fullfile(folder_path, '*.csv'));    
 % 
 % Crear una variable de celdas para almacenar los datos de los archivos CSV
 data_cell = cell(length(files), 1); 
@@ -30,15 +30,26 @@ data_cell = cell(length(files), 1);
 figure();
 hold on;
 grid on
+
+%% CARGAR .MAT
+if exist('gyroData.mat')
+    simuStruct = load('gyroData.mat'),
+else
+    simuStruct = struct();
+end
+
 for i = 1:length(data_cell)
      file_path = fullfile(folder_path, files(i).name); % ruta completa del archivo
-     data = readtable(file_path); % leer archivo csv
+%      data = readtable(file_path); % leer archivo csv
      % Almacenar los datos en la celda correspondiente
      % Hacer lo que necesites con los datos...
      gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
-     if ~isfield (gyroData,'data_cell{i}')
-         data_cell{i} = data;
+     if ~isfield (simuStruct,files(i).name)
+         simuStruct.(files(i).name) = gyroData;
      end
+%           if ~isfield (gyroData,'data_cell{i}')
+%          data_cell{i} = data;
+%      end
      %gyroData.(data_cell{i}) = gyroData_csv2struct(data_cell{i});
      trial = gyroData.time(:,1);
      t = 0:T:((length(trial)/fs)-T);
