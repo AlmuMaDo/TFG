@@ -21,31 +21,46 @@ folder_path = 'C:\Users\almud\Desktop\UNIVERSIDAD\4ºGIB\TFG\gyroData\gyroDataNe
 % %SOLO LO ESTOY HACIENDO AQUI QUE EN LA CARPETA HAY SOLO ANDAR, PARA LUEGO
 % %DIVIDIR PUEDE VENIR BIEN EL MKDIR con parentfolder y lo otro
 % % Obtener lista de archivos csv en el directorio
-files = dir(fullfile(folder_path, '*.csv'));    
-% 
+
+% coger path de esta funcion
+TFG_git_path = fileparts(fileparts(mfilename('fullpath')));
+
+% addpath de todo el git
+addpath(genpath(TFG_git_path));
+
+% set datafiles folder path
+dataFolder_all = fullfile(TFG_git_path, 'gyroData', 'gyroDataNew');
+
+% Elige que data se quiere importar (squats, walking...)
+sportType = 'Walking';
+dataFolder = fullfile(dataFolder_all, sportType);
+
+datafiles = dir(fullfile(dataFolder, '*.csv'));    
+
 % Crear una variable de celdas para almacenar los datos de los archivos CSV
-data_cell = cell(length(files), 1); 
-% 
-% % Bucle para leer los archivos uno por uno
-figure();
-hold on;
-grid on
+data_cell = cell(length(datafiles), 1); 
+
 
 %% CARGAR .MAT
-if exist('gyroData.mat')
-    simuStruct = load('gyroData.mat'),
+matFileName = strcat('gyroData','_', sportType, '.mat');
+if exist(matFileName)
+    simuStruct = load(matFileName);
 else
     simuStruct = struct();
 end
 
+%% Bucle para leer los archivos uno por uno
+figure();
+hold on;
+grid on
 for i = 1:length(data_cell)
-     file_path = fullfile(folder_path, files(i).name); % ruta completa del archivo
+     file_path = fullfile(folder_path, datafiles(i).name); % ruta completa del archivo
 %      data = readtable(file_path); % leer archivo csv
      % Almacenar los datos en la celda correspondiente
      % Hacer lo que necesites con los datos...
      gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
-     if ~isfield (simuStruct,files(i).name)
-         simuStruct.(files(i).name) = gyroData;
+     if ~isfield (simuStruct,datafiles(i).name)
+         simuStruct.(datafiles(i).name) = gyroData;
      end
 %           if ~isfield (gyroData,'data_cell{i}')
 %          data_cell{i} = data;
@@ -59,7 +74,7 @@ for i = 1:length(data_cell)
      plot(t, x, 'DisplayName', label)
      title('Datos Giroscopio Coordenada x Andando')
    end
-     save ('gyroData.mat', 'gyroData')
+     save (matFileName, 'gyroData')
      xlabel('Tiempo (s)')
      ylabel('Velocidad angular en x (deg/s)')
      legend('show','AutoUpdate','off'); % agrega una leyenda con el nombre del archivo actual 
