@@ -99,15 +99,6 @@ for i = 1:length(data_cell)
      ylabel('Velocidad angular en y (deg/s)')
 end
 legend('show','AutoUpdate','off');
-
-% PROMEDIO COORDENADA Y
-     hold on
-     load('gyroData.mat');
-     promedio_y = promedioFunction(gyroData);
-     plot (t,promedio_y,'k-','DisplayName','Promedio','LineWidth',2);
-
-     %%PROBLEMA que tenemos es que coge el mismo promedio que en x
-
 figure
 hold on
 grid on
