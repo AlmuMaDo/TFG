@@ -42,7 +42,7 @@ for i = 1:length(data_cell)
 %      data = readtable(file_path); % leer archivo csv
      % Almacenar los datos en la celda correspondiente
      % Hacer lo que necesites con los datos...
-     gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
+     gyroData = gyroData_csv2struct(file_path); 
      if ~isfield (simuStruct,'gyroData')
          simuStruct.(files(i).name) = gyroData;
      end
@@ -59,8 +59,18 @@ for i = 1:length(data_cell)
      title('Datos Giroscopio Coordenada x Andando')
      xlabel('Tiempo (s)')
      ylabel('Velocidad angular en x (deg/s)')
+     %save('datos_x',x)
 end
 legend('show','AutoUpdate','off');
+
+% PROMEDIO COORDENADA X
+     hold on
+     load('gyroData.mat');
+     promedio_x = promedioFunction(gyroData);
+     plot (t,promedio_x,'k-','DisplayName','Promedio','LineWidth',2);
+
+
+
 figure
 hold on
 grid on
@@ -70,7 +80,7 @@ for i = 1:length(data_cell)
 %      data = readtable(file_path); % leer archivo csv
      % Almacenar los datos en la celda correspondiente
      % Hacer lo que necesites con los datos...
-     gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
+     gyroData = gyroData_csv2struct(file_path);
      if ~isfield (simuStruct,'gyroData')
          simuStruct.(files(i).name) = gyroData;
      end
@@ -89,6 +99,15 @@ for i = 1:length(data_cell)
      ylabel('Velocidad angular en y (deg/s)')
 end
 legend('show','AutoUpdate','off');
+
+% PROMEDIO COORDENADA Y
+     hold on
+     load('gyroData.mat');
+     promedio_y = promedioFunction(gyroData);
+     plot (t,promedio_y,'k-','DisplayName','Promedio','LineWidth',2);
+
+     %%PROBLEMA que tenemos es que coge el mismo promedio que en x
+
 figure
 hold on
 grid on
@@ -98,7 +117,7 @@ for i = 1:length(data_cell)
 %      data = readtable(file_path); % leer archivo csv
      % Almacenar los datos en la celda correspondiente
      % Hacer lo que necesites con los datos...
-     gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
+     gyroData = gyroData_csv2struct(file_path); 
      if ~isfield (simuStruct,'gyroData')
          simuStruct.(files(i).name) = gyroData;
      end
@@ -121,23 +140,25 @@ for i = 1:length(data_cell)
 %      ylabel('Velocidad angular en x (deg/s)')
      legend('show','AutoUpdate','off'); % agrega una leyenda con el nombre del archivo actual 
 
-%% PROMEDIO
+% %% PROMEDIO
+%   % COORDENADA X
+%      figure
+%      grid on
+%      load('gyroData.mat');
+%      promedio_x = promedioFunction(gyroData);
+%      plot (t,promedio_x,'k-','DisplayName','Promedio','LineWidth',3);
 
-%     load('gyroData.mat');
-%     promedioFunction (gyroData,data_cell);
-% Guardo en una "variable" .mat por separado los datos de tiempo, x, y, z
+     %a lo mejor tengo que crear un t nuevo , el de interpolacion, dentro
+     %del bucle dentro de la funcion o no se donde exactamente, porque con
+     %ese mismo, con el de la interpolacion es con el que tengo que plotear
+
+ %comprobar si me lo esta haciendo todo con los ejes de tiempo que toca y
+ %aqui si t lo he definido antes dentro del bucle me lo va a pillar bien?
+
+% idea feliz: Guardo en una "variable" .mat por separado los datos de tiempo, x, y, z
 
 
 
-
-
-
-
-
-%aqui cargar con load la estructura que a lo mejor previamente tenemos que guardar
-%en un .mat y ya plotear VER IDEAS DEL FINAL y ver tb lo del archivo de
-%carlos y pasarme todo lo de este script a sucio para ir pegando de ahi
-%trozos y tener esto ordenado
 
 %GyroData_csv2struct(RM1MW_MetaWearNuevo_2023-03-22T20.06.42.945_DFE264DC19EA_Gyroscope_100.000Hz_1.7.3.csv);
 % filenames{1} = 'Accelerometer_andando_pisarMarcas_20230305-104412579.csv';
@@ -157,32 +178,6 @@ for i = 1:length(data_cell)
 
 
 
-
-
-
-
-
-
-
-% %muestra 1 datos generales (comienza en 0)
-% datos1 = readmatrix ('Accelerometer_andando_pisarMarcas_20230305-104412579.csv');
-% trial1= datos1(:,1); % lo entiendo pero no se como llamarlo para cambiarle el nombre
-% t1 = 0:T:((length(trial1)/fs)-T);
-% 
-% %muestra 2 datos generales (no comienza en 0)
-% datos2 = readmatrix ('Accelerometer_andando_pisarMarcas_20230305-104544074.csv');
-% trial2 = datos2 (:,1);
-% t2 = 0:T:((length(trial2)/fs)-T);
-% 
-% %muestra 3 datos generales (comienza en 0)
-% datos3 = readmatrix ('Accelerometer_andando_pisarMarcas_20230305-113501210.csv');
-% trial3 = datos3 (:,1);
-% t3 = 0:T:((length(trial3)/fs)-T);
-% 
-% %muestra  datos generales (comienza en 0)
-% datos4 = readmatrix ('Accelerometer_andando_pisarMarcas_20230305-113639016.csv');
-% trial4 = datos4 (:,1);
-% t4 = 0:T:((length(trial4)/fs)-T);
 
 
 
