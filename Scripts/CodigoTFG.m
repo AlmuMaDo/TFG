@@ -17,7 +17,7 @@ T=1/fs;
 % Bucle para leer los csv y sacar una matriz (STAND BY)
 
 % % Directorio donde se encuentran los archivos csv
-folder_path = 'C:\Users\almud\Desktop\UNIVERSIDAD\4ºGIB\TFG\gyroData\gyroDataNew\Walking';
+%folder_path = 'C:\Users\almud\Desktop\UNIVERSIDAD\4ºGIB\TFG\gyroData\gyroDataNew\Walking';
 % %SOLO LO ESTOY HACIENDO AQUI QUE EN LA CARPETA HAY SOLO ANDAR, PARA LUEGO
 % %DIVIDIR PUEDE VENIR BIEN EL MKDIR con parentfolder y lo otro
 % % Obtener lista de archivos csv en el directorio
@@ -33,16 +33,17 @@ dataFolder_all = fullfile(TFG_git_path, 'gyroData', 'gyroDataNew');
 
 % Elige que data se quiere importar (squats, walking...)
 sportType = 'Walking';
-dataFolder = fullfile(dataFolder_all, sportType);
+angleType = 'Euler';
+dataFolder = fullfile(dataFolder_all, sportType, angleType);
 
-datafiles = dir(fullfile(dataFolder, '*.csv'));    
+dataFiles = dir(fullfile(dataFolder, '*.csv'));    
 
 % Crear una variable de celdas para almacenar los datos de los archivos CSV
-data_cell = cell(length(datafiles), 1); 
+data_cell = cell(length(dataFiles), 1); 
 
 
 %% CARGAR .MAT
-matFileName = strcat('gyroData','_', sportType, '.mat');
+matFileName = strcat('gyroData','_', sportType,'_', angleType, '.mat');
 if exist(matFileName)
     simuStruct = load(matFileName);
 else
@@ -53,14 +54,14 @@ end
 figure();
 hold on;
 grid on
-for i = 1:length(data_cell)
-     file_path = fullfile(folder_path, datafiles(i).name); % ruta completa del archivo
+for i = 1:numel(dataFiles)
+     file_path = fullfile(dataFolder, dataFiles(i).name); % ruta completa del archivo
 %      data = readtable(file_path); % leer archivo csv
      % Almacenar los datos en la celda correspondiente
      % Hacer lo que necesites con los datos...
      gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
-     if ~isfield (simuStruct,datafiles(i).name)
-         simuStruct.(datafiles(i).name) = gyroData;
+     if ~isfield (simuStruct,dataFiles(i).name)
+         simuStruct.(dataFiles(i).name) = gyroData;
      end
 %           if ~isfield (gyroData,'data_cell{i}')
 %          data_cell{i} = data;
