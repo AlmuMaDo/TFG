@@ -20,21 +20,30 @@ dataFolder_all = fullfile(TFG_git_path, 'gyroData', 'gyroDataNew');
 
 % Elige que data se quiere importar (squats, walking...)
 sportType = 'Walking';
-angleType = 'Euler';
+angleType = 'Giroscopio';
 dataFolder = fullfile(dataFolder_all, sportType, angleType);
 
 dataFiles = dir(fullfile(dataFolder, '*.csv'));    
 
 % Crear una variable de celdas para almacenar los datos de los archivos CSV
 data_cell = cell(length(dataFiles), 1); 
-
+DictPath = fullfile(dataFolder,strcat('DataDict_', sportType, '_', angleType, '.mat'));
 
 %% CARGAR .MAT
-matFileName = strcat('gyroData','_', sportType,'_', angleType, '.mat');
-if exist(matFileName)
-    simuStruct = load(matFileName);
+% matFileName = strcat('gyroData','_', sportType,'_', angleType, '.mat');
+% if exist(matFileName)
+%     simuStruct = load(matFileName);
+% else
+%     simuStruct = struct();
+% end
+
+% Mirar si existe diccionario
+if exist(DictPath)
+    load(DictPath)
 else
-    simuStruct = struct();
+    % Si no existe hay que crearlo
+    DataDict = containers.Map();
+    save(DictPath, 'DataDict')
 end
 
 %% Bucle para leer los archivos uno por uno
@@ -45,24 +54,31 @@ for iDataFile = 1:numel(dataFiles)
     
     % Coger nombre y crear nombre del .mat
     [~,cleanName] = fileparts(strrep(dataFiles(iDataFile).name, ' ', '_'));
-    filePathMat = fullfile(dataFolder, strcat(cleanName, '.mat');
+%     filePathMat = fullfile(dataFolder, strcat(cleanName, '.mat'));
     
-    % Cargar archivo
-    if exist(filePathMat)
-        % mirar si existe el .mat (en teoria mas eficiente que cargar csv)
-        gyroData = load(filePathMat);
+    if isKey(DataDict, cleanName)
+        % mirar si esta ya en diccionario
+        gyroData = DataDict(cleanName);
     else
-        % si no existe: cargar de csv y guardar en .mat
+        % Si no esta guardado, cargar de csv y anadir al diccionario y
+        % guardarlo
         gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
-        save(filePathMat, 'gyroData');
+        %añadir al diccionario
+        DataDict(cleanName) = gyroData;
+        save(DictPath, 'DataDict');
     end
+        
+%         save(filePathMat, 'gyroData');
+%     if exist(filePathMat)
+%         % mirar si existe el .mat (en teoria mas eficiente que cargar csv)
+%         gyroData = load(filePathMat);
+%     else
+%         % si no existe: cargar de csv y guardar en .mat
+%         gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
+%         save(filePathMat, 'gyroData');
+%     end
     
-    % Crear cell con datos para ayudar luego a la hora de hacer el promedio
-    InputDataInfo{iDataFile, 1} = cleanName;
-    InputDataInfo{iDataFile, 2} = gyroData; 
-    
-    % otra opcion es crear un diccionario 
-    DataDict = containers.Map(cleanName, gyroData);
+
     
     
     trial = gyroData.time(:,1);
@@ -71,6 +87,7 @@ for iDataFile = 1:numel(dataFiles)
     %n = 1:length(data_cell);
     label = strcat('Muestra', num2str(iDataFile)); % crea una etiqueta para el archivo actual% crea una variable para indicar el nÃºmero de muestra
     plot(t, x, 'DisplayName', label)
+    hold on
     title('Datos Giroscopio Coordenada x Andando')
     xlabel('Tiempo (s)')
     ylabel('Velocidad angular en x (deg/s)')
@@ -80,10 +97,10 @@ legend('show','AutoUpdate','off'); % agrega una leyenda con el nombre del archiv
 %% Calcular promedios   
 %% COORDENADA X
 % PROMEDIO COORDENADA X
-figure();
+% figure();
 
 hold on
-load('gyroData.mat');
+% load('gyroData.mat');
 promedio_x = promedioFunction(gyroData_x);
 plot(t,promedio_x,'k-', 'DisplayName','Promedio', 'LineWidth',2);
 % Guardo en una "variable" .mat por separado los datos de tiempo, x, y, z
