@@ -38,57 +38,73 @@ else
 end
 
 %% Bucle para leer los archivos uno por uno
-%% COORDENADA X
-figure();
-hold on;
-grid on
-for i = 1:numel(dataFiles)
-     file_path = fullfile(dataFolder, dataFiles(i).name); % ruta completa del archivo
-%      data = readtable(file_path); % leer archivo csv
-     % Almacenar los datos en la celda correspondiente
-     % Hacer lo que necesites con los datos...
-     gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
-     if ~isfield (simuStruct,dataFiles(i).name)
-         simuStruct.(dataFiles(i).name) = gyroData;
-     end
-     trial = gyroData.time(:,1);
-     t = 0:T:((length(trial)/fs)-T);
-     x = gyroData.x(:,1);
-     %n = 1:length(data_cell);
-     label = strcat('Muestra', num2str(i)); % crea una etiqueta para el archivo actual% crea una variable para indicar el número de muestra
-     plot(t, x, 'DisplayName', label)
-     title('Datos Giroscopio Coordenada x Andando')
-     xlabel('Tiempo (s)')
-     ylabel('Velocidad angular en x (deg/s)')
-   end
-     save (matFileName, 'gyroData')
-     
-     legend('show','AutoUpdate','off'); % agrega una leyenda con el nombre del archivo actual 
+for iDataFile = 1:numel(dataFiles)
+    file_path = fullfile(dataFolder, dataFiles(iDataFile).name); % ruta completa del archivo
+    % Almacenar los datos en la celda correspondiente
+    % Hacer lo que necesites con los datos...
+    
+    % Coger nombre y crear nombre del .mat
+    [~,cleanName] = fileparts(strrep(dataFiles(iDataFile).name, ' ', '_'));
+    filePathMat = fullfile(dataFolder, strcat(cleanName, '.mat');
+    
+    % Cargar archivo
+    if exist(filePathMat)
+        % mirar si existe el .mat (en teoria mas eficiente que cargar csv)
+        gyroData = load(filePathMat);
+    else
+        % si no existe: cargar de csv y guardar en .mat
+        gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
+        save(filePathMat, 'gyroData');
+    end
+    
+    % Crear cell con datos para ayudar luego a la hora de hacer el promedio
+    InputDataInfo{iDataFile, 1} = cleanName;
+    InputDataInfo{iDataFile, 2} = gyroData; 
+    
+    % otra opcion es crear un diccionario 
+    DataDict = containers.Map(cleanName, gyroData);
+    
+    
+    trial = gyroData.time(:,1);
+    t = 0:T:((length(trial)/fs)-T);
+    x = gyroData.x(:,1);
+    %n = 1:length(data_cell);
+    label = strcat('Muestra', num2str(iDataFile)); % crea una etiqueta para el archivo actual% crea una variable para indicar el número de muestra
+    plot(t, x, 'DisplayName', label)
+    title('Datos Giroscopio Coordenada x Andando')
+    xlabel('Tiempo (s)')
+    ylabel('Velocidad angular en x (deg/s)')
+end
+legend('show','AutoUpdate','off'); % agrega una leyenda con el nombre del archivo actual
 
+%% Calcular promedios   
+%% COORDENADA X
 % PROMEDIO COORDENADA X
-      hold on
-      load('gyroData.mat');
-      promedio_x = promedioFunction(gyroData_x);
-      plot(t,promedio_x,'k-', 'DisplayName','Promedio', 'LineWidth',2);
-      % Guardo en una "variable" .mat por separado los datos de tiempo, x, y, z
+figure();
+
+hold on
+load('gyroData.mat');
+promedio_x = promedioFunction(gyroData_x);
+plot(t,promedio_x,'k-', 'DisplayName','Promedio', 'LineWidth',2);
+% Guardo en una "variable" .mat por separado los datos de tiempo, x, y, z
 
 %% COORDENADA Y
 figure
 grid on
 
-for i = 1:length(data_cell)
-     file_path = fullfile(folder_path, files(i).name); % ruta completa del archivo
+for iDataFile = 1:length(data_cell)
+     file_path = fullfile(folder_path, files(iDataFile).name); % ruta completa del archivo
      % Almacenar los datos en la celda correspondiente
      % Hacer lo que necesites con los datos...
      gyroData = gyroData_csv2struct(file_path);
      if ~isfield (simuStruct,'gyroData')
-         simuStruct.(files(i).name) = gyroData;
+         simuStruct.(files(iDataFile).name) = gyroData;
      end
      trial = gyroData.time(:,1);
      t = 0:T:((length(trial)/fs)-T);
      y = gyroData.y(:,1);
      %n = 1:length(data_cell);
-     label = strcat('Muestra', num2str(i)); % crea una etiqueta para el archivo actual% crea una variable para indicar el número de muestra
+     label = strcat('Muestra', num2str(iDataFile)); % crea una etiqueta para el archivo actual% crea una variable para indicar el número de muestra
      plot(t, y, 'DisplayName', label)
      title('Datos Giroscopio Coordenada y Andando')
      xlabel('Tiempo (s)')
@@ -109,19 +125,19 @@ figure
 hold on
 grid on
 
-for i = 1:length(data_cell)
-     file_path = fullfile(folder_path, files(i).name); % ruta completa del archivo
+for iDataFile = 1:length(data_cell)
+     file_path = fullfile(folder_path, files(iDataFile).name); % ruta completa del archivo
      % Almacenar los datos en la celda correspondiente
      % Hacer lo que necesites con los datos...
      gyroData = gyroData_csv2struct(file_path); 
      if ~isfield (simuStruct,'gyroData')
-         simuStruct.(files(i).name) = gyroData;
+         simuStruct.(files(iDataFile).name) = gyroData;
      end
      trial = gyroData.time(:,1);
      t = 0:T:((length(trial)/fs)-T);
      z = gyroData.z(:,1);
      %n = 1:length(data_cell);
-     label = strcat('Muestra', num2str(i)); % crea una etiqueta para el archivo actual% crea una variable para indicar el número de muestra
+     label = strcat('Muestra', num2str(iDataFile)); % crea una etiqueta para el archivo actual% crea una variable para indicar el número de muestra
      plot(t, z, 'DisplayName', label)
      title('Datos Giroscopio Coordenada z Andando')
      xlabel('Tiempo (s)')
