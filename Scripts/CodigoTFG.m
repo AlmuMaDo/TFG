@@ -63,7 +63,10 @@ for iDataFile = 1:numel(dataFiles)
         % Si no esta guardado, cargar de csv y anadir al diccionario y
         % guardarlo
         gyroData = gyroData_csv2struct(file_path); % no se si esta linea es necesaria
-        %añadir al diccionario
+        
+        % Normalizar muestras entre ... y ...
+        
+        % añadir al diccionario muestras ya normalizadas
         DataDict(cleanName) = gyroData;
         save(DictPath, 'DataDict');
     end
@@ -94,14 +97,17 @@ for iDataFile = 1:numel(dataFiles)
 end
 legend('show','AutoUpdate','off'); % agrega una leyenda con el nombre del archivo actual
 
-%% Calcular promedios   
+
+
+
+%% Calcular promedios con muestras normalizadas
 %% COORDENADA X
 % PROMEDIO COORDENADA X
 % figure();
 
 hold on
 % load('gyroData.mat');
-promedio_x = promedioFunction(gyroData_x);
+promedio_x = promedioFunction(gyroData);
 plot(t,promedio_x,'k-', 'DisplayName','Promedio', 'LineWidth',2);
 % Guardo en una "variable" .mat por separado los datos de tiempo, x, y, z
 
