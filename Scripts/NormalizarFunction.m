@@ -6,7 +6,7 @@ function gyroData_norm = NormalizarFunction(gyroData, t0, tf)
 %% inicializar estructura salida
 gyroData_norm = gyroData;
 
-%% frecuencia muestreo nomalizada
+%% frecuencia muestreo normalizada
 % ver cuantas muestras se han tomado en total y sacar la nueva frecuencia 
 % de muestreo normalizada para la escala entre t0 y tf
 
