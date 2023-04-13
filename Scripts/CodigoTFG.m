@@ -78,7 +78,7 @@ end
 hold on
 gyroData_all = load(DictPath);
 gyroData_all = gyroData_all.DataDict;
-[promedio, gyroData_all_interp] = promedioFunction2(gyroData_all);
+[promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
 plot(promedio.time,promedio.x,'k-','LineWidth',1.75, 'DisplayName', 'Promedio')
 
 legend('show','AutoUpdate','off'); 
@@ -123,7 +123,7 @@ end
 hold on
 gyroData_all = load(DictPath);
 gyroData_all = gyroData_all.DataDict;
-[promedio, gyroData_all_interp] = promedioFunction2(gyroData_all);
+[promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
 plot(promedio.time,promedio.y,'k-','LineWidth',1.75, 'DisplayName', 'Promedio')
 
 legend('show','AutoUpdate','off'); 
@@ -169,7 +169,7 @@ end
 hold on
 gyroData_all = load(DictPath);
 gyroData_all = gyroData_all.DataDict;
-[promedio, gyroData_all_interp] = promedioFunction2(gyroData_all);
+[promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
 plot(promedio.time,promedio.z,'k-','LineWidth',1.75, 'DisplayName', 'Promedio')
 
 legend('show','AutoUpdate','off'); 
