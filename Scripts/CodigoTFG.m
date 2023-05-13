@@ -23,7 +23,7 @@ sportType = 'Squats';
 angleType = 'Giroscopio';
 location = 'Delante';
 patient = 'ALBA';
-dataFolder = fullfile(dataFolder_all, sportType, angleType, location, patient);
+dataFolder = fullfile(dataFolder_all, patient, sportType, angleType, location);
 
 dataFiles = dir(fullfile(dataFolder, '*.csv'));    
 
