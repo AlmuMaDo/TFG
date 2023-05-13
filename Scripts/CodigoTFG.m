@@ -28,7 +28,6 @@ PatientList = dir(dataFolder_all);
 PatientList = PatientList(~ismember({PatientList.name}, {'.','..'}));
 PatientList = {PatientList.name};
 
-% patient = 'ALBA';
 for iPatient = 1:numel(PatientList)
 
     Patient = PatientList{iPatient};
@@ -75,6 +74,7 @@ for iPatient = 1:numel(PatientList)
         t = DataDict(cleanName).time;
         eje_vert = DataDict(cleanName).x;
         label = strcat('Muestra', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
+        subplot(1,3,1) % HAY OTRA COSA QUE SE LLAMA GRIDLAYOUT QUE QUEDA MAS CHULO PERO ES MENOS SIMPLE
         plot(t, eje_vert, 'DisplayName', label)
         hold on
         title('Gyro x delante ')
