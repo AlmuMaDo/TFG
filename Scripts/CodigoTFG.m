@@ -19,9 +19,11 @@ addpath(genpath(TFG_git_path));
 dataFolder_all = fullfile(TFG_git_path, 'gyroData', 'gyroDataNew');
 
 % Elige que data se quiere importar (squats, walking...)
-sportType = 'Walking';
+sportType = 'Squats';
 angleType = 'Giroscopio';
-dataFolder = fullfile(dataFolder_all, sportType, angleType);
+location = 'Delante';
+patient = 'ALBA';
+dataFolder = fullfile(dataFolder_all, sportType, angleType, location, patient);
 
 dataFiles = dir(fullfile(dataFolder, '*.csv'));    
 
@@ -66,11 +68,11 @@ for iDataFile = 1:numel(dataFiles)
     label = strcat('Muestra', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
     plot(t, eje_vert, 'DisplayName', label)
     hold on
-    title('Datos Giroscopio Coordenada x Andando')
-    xlabel('Tiempo (s)')
-    ylabel('Velocidad angular en x (deg/s)')
+    title('Euler Data Pitch Squats Lateral (External) Collateral Ligament Right Knee')
+    xlabel('Time (s)')
+    ylabel('Angle(°)')
 end
-
+grid on
 
 % Calcular promedios con muestras normalizadas
 % COORDENADA X
@@ -114,12 +116,13 @@ for iDataFile = 1:numel(dataFiles)
     label = strcat('Muestra', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
     plot(t, eje_vert, 'DisplayName', label)
     hold on
-    title('Datos Giroscopio Coordenada y Andando')
-    xlabel('Tiempo (s)')
-    ylabel('Velocidad angular en y (deg/s)')
+    title('Euler Data Roll Squats Lateral (External) Collateral Ligament Right Knee')
+    xlabel('Time (s)')
+    ylabel('Angle(°)')
 end
 
 % PROMEDIO COORDENADA Y
+grid on
 hold on
 gyroData_all = load(DictPath);
 gyroData_all = gyroData_all.DataDict;
@@ -160,12 +163,13 @@ for iDataFile = 1:numel(dataFiles)
     label = strcat('Muestra', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
     plot(t, eje_vert, 'DisplayName', label)
     hold on
-    title('Datos Giroscopio Coordenada z Andando')
-    xlabel('Tiempo (s)')
-    ylabel('Velocidad angular en z (deg/s)')
+    title('Euler Data Yaw Squats Lateral (External) Collateral Ligament Right Knee')
+    xlabel('Time (s)')
+    ylabel('Angle(°)')
 end
 
 % PROMEDIO COORDENADA Z
+grid on
 hold on
 gyroData_all = load(DictPath);
 gyroData_all = gyroData_all.DataDict;
