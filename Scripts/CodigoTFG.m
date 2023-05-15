@@ -19,13 +19,6 @@ addpath(genpath(TFG_git_path));
 % set datafiles folder path
 dataFolder_all = fullfile(TFG_git_path, 'gyroData', 'gyroDataNew');
 
-% Elige que data se quiere importar (squats, walking...)
-% Sport = 'Squats';
-% Angle = 'Giroscopio';
-% Location = 'Delante';
-
-
-
 % Patient list creation
 PatientList = dir(dataFolder_all);
 PatientList = PatientList([PatientList.isdir]);
@@ -150,7 +143,7 @@ for iPatient = 1:numel(PatientList)
                 legend('show','AutoUpdate','off');
 
                 %% COORDENADA Y
-                %     figure
+                    figure
                 for iDataFile = 1:numel(dataFiles)
                     file_path = fullfile(dataFolder, dataFiles(iDataFile).name); % ruta completa del archivo
                     % Almacenar los datos en la celda correspondiente
@@ -221,7 +214,7 @@ for iPatient = 1:numel(PatientList)
 
                 legend('show','AutoUpdate','off');
                 %% COORDENADA Z
-                %     figure
+                    figure
                 for iDataFile = 1:numel(dataFiles)
                     file_path = fullfile(dataFolder, dataFiles(iDataFile).name); % ruta completa del archivo
                     % Almacenar los datos en la celda correspondiente
@@ -307,42 +300,67 @@ figure
 promedioPath = fullfile(dataFolder_all,'Promedio_all_results.mat');
 save(promedioPath, 'promedio_all')
 for iSportType = 1:numel(sportList)
-%     figure
     SportType = sportList{iSportType};
     for iAngleType = 1:numel(AngleList)
-%         figure
         AngleType = AngleList{iAngleType};
-        for iLocationPlot = 1:numel(LocationList)
+        for iLocationType = 1:numel(LocationList)
             figure
-            LocationPlot = LocationList{iLocationPlot};
-            for iPatientPlot = 1:numel(PatientList)
-%                 figure
-                PatientPlot = PatientList{iPatientPlot};
-                tPlotProm = promedio_all.(PatientPlot).(SportType).(AngleType).(LocationPlot).time;
+            grid on
+            LocationType = LocationList{iLocationType};
+
+            for iPatientName = 1:numel(PatientList)
+
+                PatientName = PatientList{iPatientName};
+     
+                tPlotProm = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).time;
+                ord_x = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).x;
+                label = strcat('Promedio', num2str(iPatientName));
                 subplot(3,1,1)
-                ord_x = promedio_all.(PatientPlot).(SportType).(AngleType).(LocationPlot).x;
-                plot(tPlotProm,ord_x)
-%                 [promedio, gyroData_all_interp] = promedioFunction();
-%                 plot(promedio.time,promedio.x,'k-','LineWidth',1.75, 'DisplayName', 'Promedio')
+                plot(tPlotProm,ord_x, 'DisplayName', label)
                 title('x')
+                legend('show','AutoUpdate','off');
                 hold on
-                % promedio de promedios de x
-                promedioallperson = cellfun(@(s) promedio_all.(s).(SportType).(AngleType).(LocationPlot).y, fieldnames(promedio_all), 'UniformOutput', false);
-                % ahora habra que volver a normalizar e iterar para poder
-                % tener en todos las personas el mismo numero de valores y
-                % poder asi hacer la media bien entre todos
+                ord_y = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).y;
+                label = strcat('Promedio', num2str(iPatientName));
                 subplot(3,1,2)
-                ord_y = promedio_all.(PatientPlot).(SportType).(AngleType).(LocationPlot).y;
-                plot(tPlotProm,ord_y)
+                plot(tPlotProm,ord_y, 'DisplayName', label)
                 title('y')
+                legend('show','AutoUpdate','off');
                 hold on
+                ord_z = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).z;
+                label = strcat('Promedio', num2str(iPatientName));
                 subplot(3,1,3)
-                ord_z = promedio_all.(PatientPlot).(SportType).(AngleType).(LocationPlot).z;
-                plot(tPlotProm,ord_z)
+                plot(tPlotProm,ord_z, 'DisplayName', label)
+                title ('z')
                 hold on
+                legend('show','AutoUpdate','off');
+
             end
+        
         end
     end
 end
 
+%% PROMEDIO PROMEDIOS SEGUN COORDENADAS
+for iSportType = 1:numel(sportList)
+    SportType = sportList{iSportType};
+    for iAngleType = 1:numel(AngleList)
+        AngleType = AngleList{iAngleType};
+        for iLocationType = 1:numel(LocationList)
+            figure
+            grid on
+            LocationType = LocationList{iLocationType};
+            %no hago bucle de personas porque lo que quiero es hacer el
+            %promedio de TODAS las personas
+            for iPatientName = 1:numel(PatientList)
+                PatientName = PatientList{iPatientName};
+                prom_total.(PatientName) = promedio_all.(PatientName).(SportType).(AngleType).(LocationType);
+            end
+            promedio_allPatients = promedioAllFunction(prom_total);
+
+        end
+    end
+end
+
+% legend('show','AutoUpdate','off');
 
