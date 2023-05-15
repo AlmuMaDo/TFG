@@ -28,6 +28,7 @@ dataFolder_all = fullfile(TFG_git_path, 'gyroData', 'gyroDataNew');
 
 % Patient list creation
 PatientList = dir(dataFolder_all);
+PatientList = PatientList([PatientList.isdir]);
 PatientList = PatientList(~ismember({PatientList.name}, {'.','..'}));
 PatientList = {PatientList.name};
 
@@ -103,23 +104,38 @@ for iPatient = 1:numel(PatientList)
                     eje_vert = DataDict(cleanName).x;
 
                     % Get name for plot ====
-                    nameOrd = 'x-Coordinate';
+                    AngleTitle = ' Gyroscope ';
                     if strcmp(Angle, 'Euler')
-                        nameOrd = 'Pitch';
+                        AngleTitle = ' Euler';
                     end
-                    place = 'Suprapatellar Area';
+                    nameOrd = ' x-Coordinate';
+                    if strcmp(Angle, 'Euler')
+                        nameOrd = ' Pitch';
+                    end
+                    SportTitle = ' Squats';
+%                     if strcmp(Sport, 'Walking')
+%                         exercise = ' Walking';
+%                     end
+                    LocationTitle = ' Suprapatellar Area';
                     if strcmp(Location, 'Lateral')
-                        place = 'Lateral (External) Collateral Ligament';
+                        LocationTitle = ' Lateral (External) Collateral Ligament'; 
                     end
+                    
                     % ======================
 
                     label = strcat('Muestra', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
                     subplot(3,1,1) % HAY OTRA COSA QUE SE LLAMA GRIDLAYOUT QUE QUEDA MAS CHULO PERO ES MENOS SIMPLE
                     plot(t, eje_vert, 'DisplayName', label)
                     hold on
-                    title(strcat(Angle, ' ', nameOrd, ' ', Sport, ' ', place, ' Right Knee'))
+                    title(strcat(AngleTitle, ' ', nameOrd, ' ', SportTitle, ' ', LocationTitle, ' Right Knee'))
                     xlabel('Time (s)')
-                    ylabel('Velocidad angular')
+                    % Get name for ylabel ====
+                    ylabel('Angular velocity in x (deg/s)')
+                    if strcmp(Angle, 'Euler')
+                       ylabel('Angle (°)')
+
+                    end
+                    %===========================================
                 end
                 grid on
 
@@ -131,8 +147,6 @@ for iPatient = 1:numel(PatientList)
                 gyroData_all = gyroData_all.DataDict;
                 [promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
                 plot(promedio.time,promedio.x,'k-','LineWidth',1.75, 'DisplayName', 'Promedio')
-                %     promedio.squats.alba.giroscopio.delante.t = t;
-                %     promedio.squats.alba.giroscopio.delante.x = ;
                 legend('show','AutoUpdate','off');
 
                 %% COORDENADA Y
@@ -161,15 +175,40 @@ for iPatient = 1:numel(PatientList)
                         DataDict(cleanName) = gyroData_norm;
                         save(DictPath, 'DataDict');
                     end
+                    % Get name for plot ====
+                    AngleTitle = ' Gyroscope ';
+                    if strcmp(Angle, 'Euler')
+                        AngleTitle = ' Euler';
+                    end
+                    nameOrd = ' y-Coordinate';
+                    if strcmp(Angle, 'Euler')
+                        nameOrd = ' Roll';
+                    end
+                    SportTitle = ' Squats';
+%                     if strcmp(Sport, 'Walking')
+%                         exercise = ' Walking';
+%                     end
+                    LocationTitle = ' Suprapatellar Area';
+                    if strcmp(Location, 'Lateral')
+                        LocationTitle = ' Lateral (External) Collateral Ligament';
+                    end
+                    
+                    % ======================
                     t = DataDict(cleanName).time;
                     eje_vert = DataDict(cleanName).y;
                     label = strcat('Muestra', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
                     subplot(3,1,2)
                     plot(t, eje_vert, 'DisplayName', label)
                     hold on
-                    title('gyro y delante')
+                    title(strcat(AngleTitle, ' ', nameOrd, ' ', SportTitle, ' ', LocationTitle, ' Right Knee'))
                     xlabel('Time (s)')
-                    ylabel('Velocidad angular')
+                   % Get name for ylabel ====
+                    ylabel('Angular velocity in y (deg/s)')
+                    if strcmp(Angle, 'Euler')
+                       ylabel('Angle (°)')
+
+                    end
+                    %===========================================
                 end
 
                 % PROMEDIO COORDENADA Y
@@ -207,16 +246,40 @@ for iPatient = 1:numel(PatientList)
                         DataDict(cleanName) = gyroData_norm;
                         save(DictPath, 'DataDict');
                     end
+                     % Get name for plot ====
+                    AngleTitle = ' Gyroscope ';
+                    if strcmp(Angle, 'Euler')
+                        AngleTitle = ' Euler';
+                    end
+                    nameOrd = ' z-Coordinate';
+                    if strcmp(Angle, 'Euler')
+                        nameOrd = ' Yaw';
+                    end
+                    SportTitle = ' Squats';
+%                     if strcmp(Sport, 'Walking')
+%                         exercise = ' Walking';
+%                     end
+                    LocationTitle = ' Suprapatellar Area';
+                    if strcmp(Location, 'Lateral')
+                        LocationTitle = ' Lateral (External) Collateral Ligament';
+                    end
+                    
+                    % ======================
                     t = DataDict(cleanName).time;
                     eje_vert = DataDict(cleanName).z;
                     label = strcat('Muestra', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
                     subplot(3,1,3)
-
                     plot(t, eje_vert, 'DisplayName', label)
                     hold on
-                    title('gyro z delante')
+                    title(strcat(AngleTitle, '  ', nameOrd, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
                     xlabel('Time (s)')
-                    ylabel('Velocidad angular')
+                    % Get name for ylabel ====
+                    ylabel('Angular velocity in z (deg/s)')
+                    if strcmp(Angle, 'Euler')
+                       ylabel('Angle (°)')
+
+                    end
+                    %===========================================
                 end
 
                 % PROMEDIO COORDENADA Z
@@ -230,9 +293,56 @@ for iPatient = 1:numel(PatientList)
                 legend('show','AutoUpdate','off');
 
                 % Guardar promedio en una estructura
-                promedio_all.(Sport).(Patient).(Angle).(Location) = promedio;
+                promedio_all.(Patient).(Sport).(Angle).(Location) = promedio;
+                
             end
         end
     end
 end
-% plot(promedio_all.(Sport).(Patient).(Angle).(Location).t, promedio_all.(Sport).(Patient).(Angle).(Location).x)
+
+%% GUARDAR TODOS LOS PROMEDIOS CON TODOS LOS CAMPOS EN UN .MAT 
+% lo voy a guardar al mismo nivel que los pacientes, dentro de la carpeta
+% gyroDataNew
+figure
+promedioPath = fullfile(dataFolder_all,'Promedio_all_results.mat');
+save(promedioPath, 'promedio_all')
+for iSportType = 1:numel(sportList)
+%     figure
+    SportType = sportList{iSportType};
+    for iAngleType = 1:numel(AngleList)
+%         figure
+        AngleType = AngleList{iAngleType};
+        for iLocationPlot = 1:numel(LocationList)
+            figure
+            LocationPlot = LocationList{iLocationPlot};
+            for iPatientPlot = 1:numel(PatientList)
+%                 figure
+                PatientPlot = PatientList{iPatientPlot};
+                tPlotProm = promedio_all.(PatientPlot).(SportType).(AngleType).(LocationPlot).time;
+                subplot(3,1,1)
+                ord_x = promedio_all.(PatientPlot).(SportType).(AngleType).(LocationPlot).x;
+                plot(tPlotProm,ord_x)
+%                 [promedio, gyroData_all_interp] = promedioFunction();
+%                 plot(promedio.time,promedio.x,'k-','LineWidth',1.75, 'DisplayName', 'Promedio')
+                title('x')
+                hold on
+                % promedio de promedios de x
+                promedioallperson = cellfun(@(s) promedio_all.(s).(SportType).(AngleType).(LocationPlot).y, fieldnames(promedio_all), 'UniformOutput', false);
+                % ahora habra que volver a normalizar e iterar para poder
+                % tener en todos las personas el mismo numero de valores y
+                % poder asi hacer la media bien entre todos
+                subplot(3,1,2)
+                ord_y = promedio_all.(PatientPlot).(SportType).(AngleType).(LocationPlot).y;
+                plot(tPlotProm,ord_y)
+                title('y')
+                hold on
+                subplot(3,1,3)
+                ord_z = promedio_all.(PatientPlot).(SportType).(AngleType).(LocationPlot).z;
+                plot(tPlotProm,ord_z)
+                hold on
+            end
+        end
+    end
+end
+
+
