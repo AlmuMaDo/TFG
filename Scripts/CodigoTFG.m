@@ -112,8 +112,8 @@ for iPatient = 1:numel(PatientList)
                     
                     % ======================
 
-                    label = strcat('Sample', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
-                    subplot(3,1,1) % HAY OTRA COSA QUE SE LLAMA GRIDLAYOUT QUE QUEDA MAS CHULO PERO ES MENOS SIMPLE
+                    label = strcat('Sample ', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
+                    subplot(3,1,1) 
                     plot(t, eje_vert, 'DisplayName', label)
                     hold on
                     title(strcat(AngleTitle, ' ', nameOrd, ' ', SportTitle, ' ', LocationTitle, ' Right Knee'))
@@ -132,10 +132,11 @@ for iPatient = 1:numel(PatientList)
                 % COORDENADA X
                 % PROMEDIO COORDENADA X
                 hold on
+                label_average = strcat('Average ', num2str(iDataFile));
                 gyroData_all = load(DictPath);
                 gyroData_all = gyroData_all.DataDict;
                 [promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
-                plot(promedio.time,promedio.x,'k-','LineWidth',1.75, 'DisplayName', 'Average')
+                plot(promedio.time,promedio.x,'k-','LineWidth',1.75, 'DisplayName', label_average)
                 legend('show','AutoUpdate','off');
 
                 %% COORDENADA Y
@@ -144,6 +145,7 @@ for iPatient = 1:numel(PatientList)
                     file_path = fullfile(dataFolder, dataFiles(iDataFile).name); % ruta completa del archivo
                     % Almacenar los datos en la celda correspondiente
                     % Hacer lo que necesites con los datos...
+
 
                     % Coger nombre y crear nombre del .mat
                     [~,cleanName] = fileparts(strrep(dataFiles(iDataFile).name, ' ', '_'));
@@ -185,7 +187,7 @@ for iPatient = 1:numel(PatientList)
                     % ======================
                     t = DataDict(cleanName).time;
                     eje_vert = DataDict(cleanName).y;
-                    label = strcat('Sample', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
+                    label = strcat('Sample ', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
                     subplot(3,1,2)
                     plot(t, eje_vert, 'DisplayName', label)
                     hold on
@@ -203,10 +205,11 @@ for iPatient = 1:numel(PatientList)
                 % PROMEDIO COORDENADA Y
                 grid on
                 hold on
+                label_average = strcat('Average ', num2str(iDataFile));
                 gyroData_all = load(DictPath);
                 gyroData_all = gyroData_all.DataDict;
                 [promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
-                plot(promedio.time,promedio.y,'k-','LineWidth',1.75, 'DisplayName', 'Average')
+                plot(promedio.time,promedio.y,'k-','LineWidth',1.75, 'DisplayName', label_average)
 
                 legend('show','AutoUpdate','off');
                 %% COORDENADA Z
@@ -215,6 +218,7 @@ for iPatient = 1:numel(PatientList)
                     file_path = fullfile(dataFolder, dataFiles(iDataFile).name); % ruta completa del archivo
                     % Almacenar los datos en la celda correspondiente
                     % Hacer lo que necesites con los datos...
+
 
                     % Coger nombre y crear nombre del .mat
                     [~,cleanName] = fileparts(strrep(dataFiles(iDataFile).name, ' ', '_'));
@@ -256,7 +260,7 @@ for iPatient = 1:numel(PatientList)
                     % ======================
                     t = DataDict(cleanName).time;
                     eje_vert = DataDict(cleanName).z;
-                    label = strcat('Sample', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
+                    label = strcat('Sample ', num2str(iDataFile)); % crea una variable para indicar el numero de muestra
                     subplot(3,1,3)
                     plot(t, eje_vert, 'DisplayName', label)
                     hold on
@@ -274,10 +278,11 @@ for iPatient = 1:numel(PatientList)
                 % PROMEDIO COORDENADA Z
                 grid on
                 hold on
+                label_average = strcat('Average ' , num2str(iDataFile));
                 gyroData_all = load(DictPath);
                 gyroData_all = gyroData_all.DataDict;
                 [promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
-                plot(promedio.time,promedio.z,'k-','LineWidth',1.75, 'DisplayName', 'Average')
+                plot(promedio.time,promedio.z,'k-','LineWidth',1.75, 'DisplayName', label_average)
 
                 legend('show','AutoUpdate','off');
 
@@ -294,9 +299,14 @@ end
 % gyroDataNew
 %prueba de juntar los dos bucles en uno y luego probar a hacer uno por
 %coordenada
+%lo unico que se me ocurre es meter todo dentro de un bucle que recorra un
+%vector con las 3 coordenadas (x,y,z) e igual asi se puede arreglar
+
+%poner lo de label_average en todos los sitios que le corresponda
 
 promedioPath = fullfile(dataFolder_all,'Promedio_all_results.mat');
 save(promedioPath, 'promedio_all')
+
 % COORDENADA X
 for iSportType = 1:numel(sportList)
     SportType = sportList{iSportType};
@@ -311,32 +321,36 @@ for iSportType = 1:numel(sportList)
             label = strcat('Average', num2str(iPatientName));
 
                 PatientName = PatientList{iPatientName};
+                %VER SI PUEDO PONER ESTO Y GENERALIZARLO PARA TODAS LAS
+                %COORDENADAS, DE MOMENTO LO COPIO 3 VECES
+
+                % COORDENADA X
                 % Get name for plot ====
                 AngleTitle = ' Gyroscope ';
-                if strcmp(Angle, 'Euler')
+                if strcmp(AngleType, 'Euler')
                     AngleTitle = ' Euler';
                 end
-                nameOrd = ' x-Coordinate';
-                if strcmp(Angle, 'Euler')
-                    nameOrd = ' Pitch';
+                nameOrd_x = ' x-Coordinate';
+                if strcmp(AngleType, 'Euler')
+                    nameOrd_x = ' Pitch';
                 end
                 SportTitle = ' Squats';
-                %                     if strcmp(Sport, 'Walking')
-                %                         exercise = ' Walking';
-                %                     end
+                %if strcmp(Sport, 'Walking')
+                %   exercise = ' Walking';
+                %end
                 LocationTitle = ' Suprapatellar Area';
                 if strcmp(LocationType, 'Lateral')
                     LocationTitle = ' Lateral (External) Collateral Ligament';
                 end
 
                 % ======================
-                % COORDENADA X
                 tPlotProm = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).time;
                 ord_x = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).x;
                 subplot(3,1,1)
                 plot(tPlotProm,ord_x, 'DisplayName', label)
                 hold on
-                title(strcat('Average', AngleTitle, ' in ', nameOrd, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
+                grid on
+                title(strcat('Average', AngleTitle, ' in ', nameOrd_x, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
                 xlabel('Time (s)')
                 % Get name for ylabel ====
                 ylabel('Angular velocity in x (deg/s)')
@@ -345,151 +359,255 @@ for iSportType = 1:numel(sportList)
 
                 end
                 %===========================================
-                nameOrd = ' x-Coordinate';
-                if strcmp(Angle, 'Euler')
-                    nameOrd = ' Pitch';
+                nameOrd_x = ' x-Coordinate';
+                if strcmp(AngleType, 'Euler')
+                    nameOrd_x = ' Pitch';
                 end
-                % PARA EL PROMEDIO DE PROMEDIOS SEGUN X
-                prom_total.(PatientName) = promedio_all.(PatientName).(SportType).(AngleType).(LocationType);
-            end
-            promedio_allPatients = promedioAllFunction(prom_total); % llamo a la función que hace el promedio de promedios
-            hold on
-            plot(promedio_allPatients.time ,promedio_allPatients.x,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
 
-        end
-    end
-end
-legend('show','AutoUpdate','off');
-
-% COORDENADA Y
-% figure
-for iSportType = 1:numel(sportList)
-    SportType = sportList{iSportType};
-    for iAngleType = 1:numel(AngleList)
-        AngleType = AngleList{iAngleType};
-        for iLocationType = 1:numel(LocationList)
-%             figure
-            grid on
-            LocationType = LocationList{iLocationType};
-
-            for iPatientName = 1:numel(PatientList)
-            label = strcat('Average', num2str(iPatientName));
-                PatientName = PatientList{iPatientName};
+                % COORDENADA Y
                 % Get name for plot ====
                 AngleTitle = ' Gyroscope ';
-                if strcmp(Angle, 'Euler')
+                if strcmp(AngleType, 'Euler')
                     AngleTitle = ' Euler';
                 end
-                nameOrd = ' y-Coordinate';
-                if strcmp(Angle, 'Euler')
-                    nameOrd = ' Roll';
+                nameOrd_y = ' y-Coordinate';
+                if strcmp(AngleType, 'Euler')
+                    nameOrd_y = ' Roll';
                 end
                 SportTitle = ' Squats';
-                %                     if strcmp(Sport, 'Walking')
-                %                         exercise = ' Walking';
-                %                     end
+                %if strcmp(Sport, 'Walking')
+                %   exercise = ' Walking';
+                %end
                 LocationTitle = ' Suprapatellar Area';
                 if strcmp(LocationType, 'Lateral')
                     LocationTitle = ' Lateral (External) Collateral Ligament';
                 end
 
                 % ======================
-                % COORDENADA Y
+                
+
                 tPlotProm = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).time;
                 ord_y = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).y;
                 subplot(3,1,2)
-                plot(tPlotProm,ord_y, 'DisplayName', label)% EL FALLO ESTA AQUI Y NO SE POR QUE
+                plot(tPlotProm,ord_y, 'DisplayName', label)
                 hold on
-                title(strcat('Average', AngleTitle, ' in ', nameOrd, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
-                xlabel('Time (s)')
-               % Get name for ylabel ====
+                grid on
+                title(strcat('Average', AngleTitle, ' in ', nameOrd_y, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
+                % Get name for ylabel ====
                 ylabel('Angular velocity in y (deg/s)')
                 if strcmp(AngleType, 'Euler')
                     ylabel('Angle (°)')
 
                 end
                 %===========================================
-                nameOrd = ' y-Coordinate';
-                if strcmp(Angle, 'Euler')
-                    nameOrd = ' Roll';
-                end
-                % PARA EL PROMEDIO DE PROMEDIOS SEGUN Y
-                prom_total.(PatientName) = promedio_all.(PatientName).(SportType).(AngleType).(LocationType);
-            end
-            
-            promedio_allPatients = promedioAllFunction(prom_total); % llamo a la función que hace el promedio de promedios
-            hold on
-            plot(promedio_allPatients.time ,promedio_allPatients.y,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
-            hold off
-%CREO QUE ME SALE BIEN--> COMPROBAR
-        end
-        %probar figures aqui 
-    end
-end
-legend('show','AutoUpdate','off');
-% COORDENADA Z
-% figure
-for iSportType = 1:numel(sportList)
-    SportType = sportList{iSportType};
-    for iAngleType = 1:numel(AngleList)
-        AngleType = AngleList{iAngleType};
-        for iLocationType = 1:numel(LocationList)
-%             figure
-            grid on
-            LocationType = LocationList{iLocationType};
+%                 nameOrd_y = ' y-Coordinate';
+%                 if strcmp(AngleType, 'Euler')
+%                     nameOrd_y = ' Roll';
+%                 end
 
-            for iPatientName = 1:numel(PatientList)
-            label = strcat('Average', num2str(iPatientName));
-                PatientName = PatientList{iPatientName};
+
+                % COORDENADA Z
                 % Get name for plot ====
                 AngleTitle = ' Gyroscope ';
-                if strcmp(Angle, 'Euler')
+                if strcmp(AngleType, 'Euler')
                     AngleTitle = ' Euler';
                 end
-                nameOrd = ' z-Coordinate';
-                if strcmp(Angle, 'Euler')
-                    nameOrd = ' Yaw';
+                nameOrd_z = ' z-Coordinate';
+                if strcmp(AngleType, 'Euler')
+                    nameOrd_z = ' Yaw';
                 end
                 SportTitle = ' Squats';
-                %                     if strcmp(Sport, 'Walking')
-                %                         exercise = ' Walking';
-                %                     end
+                %if strcmp(Sport, 'Walking')
+                %   exercise = ' Walking';
+                %end
                 LocationTitle = ' Suprapatellar Area';
                 if strcmp(LocationType, 'Lateral')
                     LocationTitle = ' Lateral (External) Collateral Ligament';
                 end
 
                 % ======================
-                % COORDENADA Z
+               
+
                 tPlotProm = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).time;
                 ord_z = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).z;
                 subplot(3,1,3)
-                plot(tPlotProm,ord_z, 'DisplayName', label)% EL FALLO ESTA AQUI Y NO SE POR QUE
+                plot(tPlotProm,ord_z, 'DisplayName', label)
                 hold on
-                title(strcat('Average', AngleTitle, ' in ', nameOrd, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
-                xlabel('Time (s)')
-               % Get name for ylabel ====
+                grid on
+                title(strcat('Average', AngleTitle, ' in ', nameOrd_z, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
+
+                % Get name for ylabel ====
                 ylabel('Angular velocity in z (deg/s)')
                 if strcmp(AngleType, 'Euler')
                     ylabel('Angle (°)')
 
                 end
                 %===========================================
-                nameOrd = ' z-Coordinate';
-                if strcmp(Angle, 'Euler')
-                    nameOrd = ' Yaw';
-                end
-                % PARA EL PROMEDIO DE PROMEDIOS SEGUN Z
+                %                 nameOrd_y = ' y-Coordinate';
+                %                 if strcmp(AngleType, 'Euler')
+                %                     nameOrd_y = ' Roll';
+                %                 end
+
+
+
+
+                % PARA EL PROMEDIO DE PROMEDIOS %ESTO EN TEORIA PODRIA IR
+                % ARRIBA , JUSTO DESPUES DE CUANDO SE TERMINA DE DEFINIR EL
+                % BUCLE DE LAS PERSONAS, ANTES DE LOS PLOTS
                 prom_total.(PatientName) = promedio_all.(PatientName).(SportType).(AngleType).(LocationType);
             end
-            
+
+
+%jjjjjjjjjjjjjjjjjjjjjjjjjjjjj
+
             promedio_allPatients = promedioAllFunction(prom_total); % llamo a la función que hace el promedio de promedios
-            hold on
+            subplot(3,1,1)
+            plot(promedio_allPatients.time ,promedio_allPatients.x,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
+            subplot(3,1,2)
+            plot(promedio_allPatients.time ,promedio_allPatients.y,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
+            subplot(3,1,3)
             plot(promedio_allPatients.time ,promedio_allPatients.z,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
-            hold off
-%CREO QUE ME SALE BIEN--> COMPROBAR
+
+
+
         end
-        %probar figures aqui 
     end
 end
 legend('show','AutoUpdate','off');
+
+% % COORDENADA Y
+% % figure
+% for iSportType = 1:numel(sportList)
+%     SportType = sportList{iSportType};
+%     for iAngleType = 1:numel(AngleList)
+%         AngleType = AngleList{iAngleType};
+%         for iLocationType = 1:numel(LocationList)
+% %             figure
+%             grid on
+%             LocationType = LocationList{iLocationType};
+% 
+%             for iPatientName = 1:numel(PatientList)
+%             label = strcat('Average', num2str(iPatientName));
+%                 PatientName = PatientList{iPatientName};
+%                 % Get name for plot ====
+%                 AngleTitle = ' Gyroscope ';
+%                 if strcmp(AngleType, 'Euler')
+%                     AngleTitle = ' Euler';
+%                 end
+%                 nameOrd = ' y-Coordinate';
+%                 if strcmp(AngleType, 'Euler')
+%                     nameOrd = ' Roll';
+%                 end
+%                 SportTitle = ' Squats';
+%                 %                     if strcmp(Sport, 'Walking')
+%                 %                         exercise = ' Walking';
+%                 %                     end
+%                 LocationTitle = ' Suprapatellar Area';
+%                 if strcmp(LocationType, 'Lateral')
+%                     LocationTitle = ' Lateral (External) Collateral Ligament';
+%                 end
+% 
+%                 % ======================
+%                 % COORDENADA Y
+%                 tPlotProm = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).time;
+%                 ord_y = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).y;
+%                 subplot(3,1,2)
+%                 plot(tPlotProm,ord_y, 'DisplayName', label)% EL FALLO ESTA AQUI Y NO SE POR QUE
+%                 hold on
+%                 title(strcat('Average', AngleTitle, ' in ', nameOrd, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
+%                 xlabel('Time (s)')
+%                % Get name for ylabel ====
+%                 ylabel('Angular velocity in y (deg/s)')
+%                 if strcmp(AngleType, 'Euler')
+%                     ylabel('Angle (°)')
+% 
+%                 end
+%                 %===========================================
+%                 nameOrd = ' y-Coordinate';
+%                 if strcmp(AngleType, 'Euler')
+%                     nameOrd = ' Roll';
+%                 end
+%                 % PARA EL PROMEDIO DE PROMEDIOS SEGUN Y
+%                 prom_total.(PatientName) = promedio_all.(PatientName).(SportType).(AngleType).(LocationType);
+%             end
+%             
+%             promedio_allPatients = promedioAllFunction(prom_total); % llamo a la función que hace el promedio de promedios
+%             hold on
+%             plot(promedio_allPatients.time ,promedio_allPatients.y,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
+%             hold off
+% 
+%             
+%         
+% %CREO QUE ME SALE BIEN--> COMPROBAR
+%         end
+%         %probar figures aqui 
+%     end
+% end
+% legend('show','AutoUpdate','off');
+% COORDENADA Z
+% figure
+% for iSportType = 1:numel(sportList)
+%     SportType = sportList{iSportType};
+%     for iAngleType = 1:numel(AngleList)
+%         AngleType = AngleList{iAngleType};
+%         for iLocationType = 1:numel(LocationList)
+%             figure
+%             grid on
+%             LocationType = LocationList{iLocationType};
+% 
+%             for iPatientName = 1:numel(PatientList)
+%             label = strcat('Average', num2str(iPatientName));
+%                 PatientName = PatientList{iPatientName};
+%                 % Get name for plot ====
+%                 AngleTitle = ' Gyroscope ';
+%                 if strcmp(AngleType, 'Euler')
+%                     AngleTitle = ' Euler';
+%                 end
+%                 nameOrd = ' z-Coordinate';
+%                 if strcmp(AngleType, 'Euler')
+%                     nameOrd = ' Yaw';
+%                 end
+%                 SportTitle = ' Squats';
+%                 %                     if strcmp(Sport, 'Walking')
+%                 %                         exercise = ' Walking';
+%                 %                     end
+%                 LocationTitle = ' Suprapatellar Area';
+%                 if strcmp(LocationType, 'Lateral')
+%                     LocationTitle = ' Lateral (External) Collateral Ligament';
+%                 end
+% 
+%                 % ======================
+%                 % COORDENADA Z
+%                 tPlotProm = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).time;
+%                 ord_z = promedio_all.(PatientName).(SportType).(AngleType).(LocationType).z;
+%                 subplot(3,1,3)
+%                 plot(tPlotProm,ord_z, 'DisplayName', label)% EL FALLO ESTA AQUI Y NO SE POR QUE
+%                 hold on
+%                 title(strcat('Average', AngleTitle, ' in ', nameOrd, '  ', SportTitle, '  ', LocationTitle, ' Right Knee'))
+%                 xlabel('Time (s)')
+%                % Get name for ylabel ====
+%                 ylabel('Angular velocity in z (deg/s)')
+%                 if strcmp(AngleType, 'Euler')
+%                     ylabel('Angle (°)')
+% 
+%                 end
+%                 %===========================================
+%                 nameOrd = ' z-Coordinate';
+%                 if strcmp(AngleType, 'Euler')
+%                     nameOrd = ' Yaw';
+%                 end
+%                 % PARA EL PROMEDIO DE PROMEDIOS SEGUN Z
+%                 prom_total.(PatientName) = promedio_all.(PatientName).(SportType).(AngleType).(LocationType);
+%             end
+%             grid on
+%             promedio_allPatients = promedioAllFunction(prom_total); % llamo a la función que hace el promedio de promedios
+%             hold on
+%             plot(promedio_allPatients.time ,promedio_allPatients.z,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
+%             hold off
+%             
+% %CREO QUE ME SALE BIEN--> COMPROBAR
+%         end
+%         %probar figures aqui 
+%     end
+% end
+% legend('show','AutoUpdate','off');
