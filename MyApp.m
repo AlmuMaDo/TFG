@@ -11,10 +11,12 @@ function MyApp(promedio_all, samples)
     % First column: 
     column1 = uigridlayout(layout, [4, 1]);
     titlelabel = uilabel(column1);
-    titlelabel.Text = 'Data Selection';
+    titlelabel.Text = 'DATA SELECTION';
     titlelabel.FontSize = 12;
     titlelabel.FontWeight = 'bold';
     titlelabel.HorizontalAlignment = 'center';
+    column1.RowHeight={'0.2x','1x','1x','1x'}; 
+    
     % Dropdown menu Location
     dropdown = uidropdown(column1, 'Items', {'Suprapatellar Area', 'Lateral (External) Collateral Ligament'},...
         'Position', [10, 10, 100, 30]);
@@ -34,42 +36,19 @@ function MyApp(promedio_all, samples)
     dropdown2.Layout.Column = 1;
 
 
-    % Second column: Title label and three vertically organized plots
-%     column2 = uigridlayout(layout, [4, 1]);
-%     titlelabel = uilabel(column2);
-%     titlelabel.Text = 'PATIENT PLOT';
-%     titlelabel.FontSize = 18;
-%     titlelabel.FontWeight = 'bold';
-%     titlelabel.HorizontalAlignment = 'center';
-% 
-%     % Ajustar el diseño de la etiqueta para ocupar menos espacio
-%     titlelabel.Layout.Row = 1;
-%     titlelabel.Layout.Column = 1;
-% 
-%    
-% %     plot(samples.(Patient).(Sport).(Angle).(Location).(['Sample_',num2str(iDataFile)]).time, samples.(Patient).(Sport).(Angle).(Location).(['Sample_',num2str(iDataFile)]).x)
-%     axesLayout = uigridlayout(column2, [3,1]);
-% %     axesLayout.Layout.Row = 2;
-%     axes1 = uiaxes(axesLayout);
-% %     axes1.Layout.Row = 2;
-% 
-%     axes2 = uiaxes(axesLayout);
-% %     axes2.Layout.Row = 3;
-% 
-%     axes3 = uiaxes(axesLayout);
-% %     axes3.Layout.Row = 3;
-% % layout.RowHeight = {20, '1x', '1x', '1x'}; % Title takes 20 pixels, plots share the rest equally
-% 
-%     axesLayout.RowHeight = {'1x', '1x', '1x'}; % Adjust the height of the rows as desired
+
     column2 = uigridlayout(layout, [4, 1]);
     titlelabel = uilabel(column2);
     titlelabel.Text = 'PATIENT PLOT';
     titlelabel.FontSize = 12;
     titlelabel.FontWeight = 'bold';
     titlelabel.HorizontalAlignment = 'center';
+    column2.RowHeight={'0.2x','1x','1x','1x'};
     axes1 = uiaxes(column2);
     axes2 = uiaxes(column2);
     axes3 = uiaxes(column2);
+
+
     % Third column: Three vertically organized plots
     column3 = uigridlayout(layout, [4, 1]);
     titlelabel = uilabel(column3);
@@ -77,6 +56,10 @@ function MyApp(promedio_all, samples)
     titlelabel.FontSize = 12;
     titlelabel.FontWeight = 'bold';
     titlelabel.HorizontalAlignment = 'center';
+    column3.RowHeight={'0.2x','1x','1x','1x'};
+
+
+
     axes4 = uiaxes(column3);
     axes5 = uiaxes(column3);
     axes6 = uiaxes(column3);
