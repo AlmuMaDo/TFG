@@ -125,9 +125,19 @@ for iPatient = 1:numel(PatientList)
 
                     end
                     %===========================================
+
+                    %guardo en un struct las muestras de cada uno (que seran 6
+                %de cada cosa) para poder representarlos en la GUI
+                samples.(Patient).(Sport).(Angle).(Location).(['Sample_',num2str(iDataFile)]) = DataDict(cleanName);
+                
                 end
                 grid on
 
+%                 %guardo en un struct las muestras de cada uno (que seran 6
+%                 %de cada cosa) para poder representarlos en la GUI
+%                 samples.(Patient).(Sport).(Angle).(Location).(['Sample_',num2str(iDataFile)]) = DataDict(cleanName);
+%                 
+                
                 % Calcular promedios con muestras normalizadas
                 % COORDENADA X
                 % PROMEDIO COORDENADA X
@@ -293,8 +303,7 @@ for iPatient = 1:numel(PatientList)
         end
     end
 end
-
-%% GUARDAR TODOS LOS PROMEDIOS CON TODOS LOS CAMPOS EN UN .MAT
+%% GUARDAR TODOS LOS PROMEDIOS CON TODOS LOS CAMPOS EN UN .MAT Y REPRESENTAR LA CURVA IDEAL
 % lo voy a guardar al mismo nivel que los pacientes, dentro de la carpeta
 % gyroDataNew
 %prueba de juntar los dos bucles en uno y luego probar a hacer uno por
@@ -474,3 +483,12 @@ for iSportType = 1:numel(sportList)
         end
     end
 end
+
+
+%% PARA LA GUI
+
+% COLUMNA 2
+% COORDENADA X
+% Guardo en un .mat la coordenada x de cada muestra y el promedio de todas
+% ellas
+save (fullfile(dataFolder_all,'Results_TFG.mat'), 'samples', 'promedio_all')
