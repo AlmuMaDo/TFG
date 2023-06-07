@@ -133,16 +133,12 @@ for iPatient = 1:numel(PatientList)
                 end
                 grid on
 
-%                 %guardo en un struct las muestras de cada uno (que seran 6
-%                 %de cada cosa) para poder representarlos en la GUI
-%                 samples.(Patient).(Sport).(Angle).(Location).(['Sample_',num2str(iDataFile)]) = DataDict(cleanName);
-%                 
                 
                 % Calcular promedios con muestras normalizadas
                 % COORDENADA X
                 % PROMEDIO COORDENADA X
                 hold on
-                label_average = ['Average ', num2str(iDataFile),' Patient', num2str(iPatient)];
+                label_average = ['Average ','Patient ', num2str(iPatient)];
                 gyroData_all = load(DictPath);
                 gyroData_all = gyroData_all.DataDict;
                 [promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
@@ -215,7 +211,7 @@ for iPatient = 1:numel(PatientList)
                 % PROMEDIO COORDENADA Y
                 grid on
                 hold on
-                label_average = ['Average ', num2str(iDataFile),' Patient', num2str(iPatient)];
+                label_average = ['Average ', 'Patient ', num2str(iPatient)];
                 gyroData_all = load(DictPath);
                 gyroData_all = gyroData_all.DataDict;
                 [promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
@@ -288,7 +284,7 @@ for iPatient = 1:numel(PatientList)
                 % PROMEDIO COORDENADA Z
                 grid on
                 hold on
-                label_average = ['Average ', num2str(iDataFile),' Patient', num2str(iPatient)];
+                label_average = ['Average ', 'Patient ', num2str(iPatient)];
                 gyroData_all = load(DictPath);
                 gyroData_all = gyroData_all.DataDict;
                 [promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
@@ -408,11 +404,6 @@ for iSportType = 1:numel(sportList)
                     ylabel('Angle (°)')
 
                 end
-                %===========================================
-%                 nameOrd_y = ' y-Coordinate';
-%                 if strcmp(AngleType, 'Euler')
-%                     nameOrd_y = ' Roll';
-%                 end
 
 
                 % COORDENADA Z
@@ -451,14 +442,7 @@ for iSportType = 1:numel(sportList)
                     ylabel('Angle (°)')
 
                 end
-                %===========================================
-                %                 nameOrd_y = ' y-Coordinate';
-                %                 if strcmp(AngleType, 'Euler')
-                %                     nameOrd_y = ' Roll';
-                %                 end
-
-
-
+                
 
                 % PARA EL PROMEDIO DE PROMEDIOS %ESTO EN TEORIA PODRIA IR
                 % ARRIBA , JUSTO DESPUES DE CUANDO SE TERMINA DE DEFINIR EL
@@ -487,7 +471,7 @@ end
 
 %% PARA LA GUI
 
-% COLUMNA 2
+% COLUMNA 2 Y 3
 % COORDENADA X
 % Guardo en un .mat la coordenada x de cada muestra y el promedio de todas
 % ellas
