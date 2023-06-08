@@ -475,4 +475,7 @@ end
 % COORDENADA X
 % Guardo en un .mat la coordenada x de cada muestra y el promedio de todas
 % ellas
-save (fullfile(dataFolder_all,'Results_TFG.mat'), 'samples', 'promedio_all')
+save (fullfile(dataFolder_all,'Results_TFG.mat'), 'samples', 'promedio_all', 'promedio_allPatients')
+
+
+

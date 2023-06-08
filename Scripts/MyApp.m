@@ -234,16 +234,23 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
 
             newXData_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).time;
             newYData4_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).x;
+
             % para representar la curva ideal encima del promedio. LA CURVA
             % IDEAL NO DEPENDE DE LOS DROPDOWN, ES IGUAL PARA TODOS
+
             newXData_prom_all = promedio_allPatients.time;
             newYData4_prom_all = promedio_allPatients.x;
             plot(axes4,newXData_prom, newYData4_prom, 'k-','LineWidth',1.75);
-            plot(axes4,newXData_prom_all,newYData4_prom_all,'r-','LineWidth',1.75);
             hold(axes4, "on")
+            plot(axes4,newXData_prom_all,newYData4_prom_all,'r-','LineWidth',1.75);
+
+            % máximos curva promedio de cada persona para x
+%             [peaks, peakIndices] = findpeaks(newYData4_prom);
+            % máximos curva ideal para x
+%             [peaks1, peakIndices1] = findpeaks(newYData4_prom_all);
+%             plot(axes4, newXData_prom(peakIndices), peaks, '-s', 'MarkerSize', 7);
 
             xlabel (axes4, 'Time (s)')
-
             % ylabel según variable
             if strcmp(Variable_value, 'Gyroscope')
                 ylabel(axes4,'Angular velocity in x (deg/s)')
@@ -274,10 +281,16 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             title (axes4, strcat([title_variable, ' ', titleCoordinate, ' Squats ' ,  titleLocation, ' Right Knee']))
 
 
-%             newXData_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).time;
             newYData5_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).y;
+
+            % Para la columna 3
+
             plot(axes5,newXData_prom, newYData5_prom, 'k-','LineWidth',1.75);
-%             hold(axes5, "on")
+            hold(axes5, "on")
+            newXData_prom_all = promedio_allPatients.time;
+            newYData5_prom_all = promedio_allPatients.y;
+            plot(axes5,newXData_prom_all,newYData5_prom_all,'r-','LineWidth',1.75);
+
             xlabel (axes5, 'Time (s)')
 
             % ylabel según variable
@@ -310,11 +323,14 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             title (axes5, strcat([title_variable, ' ', titleCoordinate, ' Squats ' ,  titleLocation, ' Right Knee']))
 
 
-%             newXData_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).time;
             newYData6_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).x;
             plot(axes6,newXData_prom, newYData6_prom, 'k-','LineWidth',1.75);
-%             hold(axes6, "on")
+            hold(axes6, "on")
+            newXData_prom_all = promedio_allPatients.time;
+            newYData6_prom_all = promedio_allPatients.z;
+            plot(axes6,newXData_prom_all,newYData6_prom_all,'r-','LineWidth',1.75);
             xlabel (axes6, 'Time (s)')
+
 
             % ylabel según variable
             if strcmp(Variable_value, 'Gyroscope')
@@ -345,11 +361,17 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             end
             title (axes6, strcat([title_variable, ' ', titleCoordinate, ' Squats ' ,  titleLocation, ' Right Knee']))
 
+           
+        
+
+
+        hold (axes4, 'off');
+        hold (axes5, 'off');
+        hold (axes6, 'off');
+
+       
     end
 
-%         hold (axes4, 'off');
-%         hold (axes5, 'off');
-%         hold (axes6, 'off');
        
         end
 
