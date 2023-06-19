@@ -76,7 +76,8 @@ for iPatient = 1:numel(PatientList)
                     [~,cleanName] = fileparts(strrep(dataFiles(iDataFile).name, ' ', '_'));
 
                     if isKey(DataDict, cleanName)
-                        % mirar si esta ya en diccionario
+                        % mirar si esta ya en diccionario del paciente (uno
+                        % por paciente)
                         gyroData = DataDict(cleanName);
                     else
                         % Si no esta guardado, cargar el csv y añadir al diccionario y guardarlo
@@ -144,7 +145,7 @@ for iPatient = 1:numel(PatientList)
                 [promedio, gyroData_all_interp] = promedioFunction(gyroData_all);
                 plot(promedio.time,promedio.x,'k-','LineWidth',1.75, 'DisplayName', label_average)
                 legend('show','AutoUpdate','off');
-
+                
                 %% COORDENADA Y
 
                 for iDataFile = 1:numel(dataFiles)
@@ -476,6 +477,5 @@ end
 % Guardo en un .mat la coordenada x de cada muestra y el promedio de todas
 % ellas
 save (fullfile(dataFolder_all,'Results_TFG.mat'), 'samples', 'promedio_all', 'promedio_allPatients')
-
 
 
