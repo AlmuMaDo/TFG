@@ -239,7 +239,9 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             newYData4_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).x;
 
             % para representar la curva ideal encima del promedio. LA CURVA
-            % IDEAL NO DEPENDE DE LOS DROPDOWN, ES IGUAL PARA TODOS
+            % IDEAL NO DEPENDE DE LOS DROPDOWN, ES IGUAL PARA TODOS (de lo
+            % unico que no depende es de los pacientes, de la localizacion
+            % y variable)
 
             newXData_prom_all = promedio_allPatients.time;
             newYData4_prom_all = promedio_allPatients.x;

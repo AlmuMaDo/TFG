@@ -11,13 +11,59 @@ T=1/fs;
 %GIROSCOPIO
 
 % coger path de esta funcion
-TFG_git_path = fileparts(fileparts(mfilename('fullpath')));
+TFG_git_path = fileparts(fileparts(mfilename('fullpath')));%mismo para minerva
 
 % addpath de todo el git
 addpath(genpath(TFG_git_path));
 
 % set datafiles folder path
 dataFolder_all = fullfile(TFG_git_path, 'gyroData', 'gyroDataNew');
+% mismo paso para minerva
+dataFolder_all_M = fullfile(TFG_git_path, 'gyroData', 'MINERVA/gyroDelanteMinerva/minervaregistro1_SensorViejo 2_2023-05-31T12.29.37.734_CCA00625B61F_Gyroscope_100.000Hz_1.3.6.csv');
+
+%minerva
+% Leer el archivo CSV
+datosR1 = readmatrix('minervaregistro1_Sensor Viejo2_2023-05-31T12.29.37.734_CCA00625B61F_Gyroscope_100.000Hz_1.3.6.csv');
+
+% Extraer las columnas de interés
+x_r1 = datosR1(:, 3); 
+y_r1_x = datosR1(:, 4);
+y_r1_y =datosR1(:,5);
+y_r1_z =datosR1(:,6);
+
+% Graficar los datos
+subplot(3,1,1)
+plot(x_r1, y_r1_x)
+grid on
+title ('Minerva gyro suprapatellar area R1 coord x')
+
+subplot(3,1,2)
+plot(x_r1, y_r1_y)
+grid on
+title ('Minerva gyro suprapatellar area R1 coord y')
+
+subplot(3,1,3)
+plot(x_r1, y_r1_z)
+grid on
+title ('Minerva gyro suprapatellar area R1 coord z')
+
+% definir el rango deseado en el eje x
+rango_time_inicio = 21.93;
+rango_time_fin = 24.93;
+
+
+% fragmentar el trozo deseado basado en el rango en el eje x
+indices = (x_r1>= rango_time_inicio) & (x_r1<= rango_time_fin);
+x_trozo = x_r1(indices);
+y_trozo_x = y_r1_x(indices);
+y_trozo_y = y_r1_y(indices);
+y_trozo_z= y_r1_z(indices);
+x_trozo_norm = NormalizarFunction(x_trozo,0,100);
+y_trozo_x_norm = NormalizarFunction(y_trozo_x,0,100);
+
+
+
+
 
 % Patient list creation
 PatientList = dir(dataFolder_all);
@@ -477,5 +523,61 @@ end
 % Guardo en un .mat la coordenada x de cada muestra y el promedio de todas
 % ellas
 save (fullfile(dataFolder_all,'Results_TFG.mat'), 'samples', 'promedio_all', 'promedio_allPatients')
+
+% comparativa curva ideal con curvas minerva
+%aislar primero la curva ideal y luego el fragmento lo represento en lo
+%otro
+
+%aislo la curva ideal
+% definir el rango deseado en el eje x
+rango_time_inicio_ideal = 15.54;
+rango_time_fin_ideal = 25.5241;
+
+
+% fragmentar el trozo deseado basado en el rango en el eje x
+indices_ideal = (promedio_allPatients.time>= rango_time_inicio_ideal) & (promedio_allPatients.time<= rango_time_fin_ideal);
+x_trozo_ideal = promedio_allPatients.time(indices_ideal);
+y_trozo_x_ideal = promedio_allPatients.x(indices_ideal);
+y_trozo_y_ideal = promedio_allPatients.y(indices_ideal);
+y_trozo_z_ideal = promedio_allPatients.z(indices_ideal);
+x_trozo_ideal_norm = NormalizarFunction(x_trozo_ideal, 0, 100);
+y_trozo_x_ideal_norm = NormalizarFunction(y_trozo_x_ideal,0,100);
+y_trozo_y_ideal_norm = NormalizarFunction(y_trozo_y_ideal,0,100);
+y_trozo_z_ideal_norm = NormalizarFunction(y_trozo_z_ideal,0,100);
+
+
+
+% figure
+% plot(x_trozo_ideal, y_trozo_x_ideal)
+grid on
+% xlim([15.54, 25.5241])
+% graficar el trozo fragmentado de minerva
+figure
+subplot(3,1,1)
+% plot(x_trozo, y_trozo_x)
+plot(x_trozo_norm, y_trozo_x_norm)
+grid on
+hold on
+% plot (x_trozo_ideal,y_trozo_x_ideal)
+plot(x_trozo_ideal_norm, y_trozo_x_ideal_norm)
+title ('comparativa en x')
+% xlim([21.93,24.93]);
+
+
+subplot(3,1,2)
+plot(x_trozo, y_trozo_y)
+grid on
+hold on
+plot(x_trozo_ideal, y_trozo_y_ideal)
+title ('comparativa en y')
+% xlim([21.93,24.93]);
+
+subplot(3,1,3)
+plot(x_trozo, y_trozo_z)
+grid on
+hold on
+plot(x_trozo_ideal,y_trozo_z_ideal)
+title ('comparativa en z')
+% xlim([21.93,24.93]);
 
 
