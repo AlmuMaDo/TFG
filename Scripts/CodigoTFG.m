@@ -20,32 +20,53 @@ addpath(genpath(TFG_git_path));
 dataFolder_all = fullfile(TFG_git_path, 'gyroData', 'gyroDataNew');
 % mismo paso para minerva
 dataFolder_all_M = fullfile(TFG_git_path, 'gyroData', 'MINERVA/gyroDelanteMinerva/minervaregistro1_SensorViejo 2_2023-05-31T12.29.37.734_CCA00625B61F_Gyroscope_100.000Hz_1.3.6.csv');
+% mismo paso para victor
+%dataFolder_all_V = fullfile(TFG_git_path, 'gyroData', 'SUBJECT13/gyroDelanteVictor/');
+
+
+
+% Victor
+% Leer el archivo CSV
+datosR2 = readmatrix('victorregistro1_Sensor Viejo 2_2023-05-31T10.31.37.670_CCA00625B61F_Gyroscope_100.000Hz_1.3.6.csv');
+
+% Extraer las columnas de interés
+dataVictor.time = datosR2(:, 3);
+dataVictor.x = datosR2(:, 4);
+dataVictor.y = datosR2(:,5);
+dataVictor.z = datosR2(:,6);
+subplot(3,1,1)
+plot(dataVictor.time, dataVictor.x)
+subplot(3,1,2)
+plot(dataVictor.time, dataVictor.y)
+subplot(3,1,3)
+plot(dataVictor.time, dataVictor.z)
+
+
+% definir el rango deseado en el eje x
+rango_time_inicioV = 28.31;
+rango_time_finV = 31.31;
+
+
+% fragmentar el trozo deseado basado en el rango en el eje x
+indicesVictor = (dataVictor.time>= rango_time_inicioV) & (dataVictor.time<= rango_time_finV);
+dataVictor.time = dataVictor.time(indicesVictor);
+dataVictor.x = dataVictor.x(indicesVictor);
+dataVictor.y = dataVictor.y(indicesVictor);
+dataVictor.z= dataVictor.z(indicesVictor);
+dataVictor_norm = NormalizarFunctionCompareVictor(dataVictor,0,100);
+
+
 
 %minerva
 % Leer el archivo CSV
 datosR1 = readmatrix('minervaregistro1_Sensor Viejo2_2023-05-31T12.29.37.734_CCA00625B61F_Gyroscope_100.000Hz_1.3.6.csv');
 
 % Extraer las columnas de interés
-x_r1 = datosR1(:, 3); 
-y_r1_x = datosR1(:, 4);
-y_r1_y =datosR1(:,5);
-y_r1_z =datosR1(:,6);
+dataMinerva.time = datosR1(:, 3);
+dataMinerva.x = datosR1(:, 4);
+dataMinerva.y = datosR1(:,5);
+dataMinerva.z = datosR1(:,6);
 
-% Graficar los datos
-subplot(3,1,1)
-plot(x_r1, y_r1_x)
-grid on
-title ('Minerva gyro suprapatellar area R1 coord x')
-
-subplot(3,1,2)
-plot(x_r1, y_r1_y)
-grid on
-title ('Minerva gyro suprapatellar area R1 coord y')
-
-subplot(3,1,3)
-plot(x_r1, y_r1_z)
-grid on
-title ('Minerva gyro suprapatellar area R1 coord z')
 
 % definir el rango deseado en el eje x
 rango_time_inicio = 21.93;
@@ -53,16 +74,12 @@ rango_time_fin = 24.93;
 
 
 % fragmentar el trozo deseado basado en el rango en el eje x
-indices = (x_r1>= rango_time_inicio) & (x_r1<= rango_time_fin);
-x_trozo = x_r1(indices);
-y_trozo_x = y_r1_x(indices);
-y_trozo_y = y_r1_y(indices);
-y_trozo_z= y_r1_z(indices);
-x_trozo_norm = NormalizarFunction(x_trozo,0,100);
-y_trozo_x_norm = NormalizarFunction(y_trozo_x,0,100);
-
-
-
+indices = (dataMinerva.time>= rango_time_inicio) & (dataMinerva.time<= rango_time_fin);
+dataMinerva.time = dataMinerva.time(indices);
+dataMinerva.x = dataMinerva.x(indices);
+dataMinerva.y = dataMinerva.y(indices);
+dataMinerva.z= dataMinerva.z(indices);
+dataMinerva_norm = NormalizarFunctionCompareMinerva(dataMinerva,0,100);
 
 
 % Patient list creation
@@ -373,9 +390,7 @@ for iSportType = 1:numel(sportList)
             label = ['Average ', num2str(iPatientName)];
 
                 PatientName = PatientList{iPatientName};
-                %VER SI PUEDO PONER ESTO Y GENERALIZARLO PARA TODAS LAS
-                %COORDENADAS, DE MOMENTO LO COPIO 3 VECES
-
+     
                 % COORDENADA X
                 % Get name for plot ====
                 AngleTitle = ' Gyroscope ';
@@ -536,48 +551,66 @@ rango_time_fin_ideal = 25.5241;
 
 % fragmentar el trozo deseado basado en el rango en el eje x
 indices_ideal = (promedio_allPatients.time>= rango_time_inicio_ideal) & (promedio_allPatients.time<= rango_time_fin_ideal);
-x_trozo_ideal = promedio_allPatients.time(indices_ideal);
-y_trozo_x_ideal = promedio_allPatients.x(indices_ideal);
-y_trozo_y_ideal = promedio_allPatients.y(indices_ideal);
-y_trozo_z_ideal = promedio_allPatients.z(indices_ideal);
-x_trozo_ideal_norm = NormalizarFunction(x_trozo_ideal, 0, 100);
-y_trozo_x_ideal_norm = NormalizarFunction(y_trozo_x_ideal,0,100);
-y_trozo_y_ideal_norm = NormalizarFunction(y_trozo_y_ideal,0,100);
-y_trozo_z_ideal_norm = NormalizarFunction(y_trozo_z_ideal,0,100);
+promedio_allPatients.time = promedio_allPatients.time(indices_ideal);
+promedio_allPatients.x = promedio_allPatients.x(indices_ideal);
+promedio_allPatients.y = promedio_allPatients.y(indices_ideal);
+promedio_allPatients.z = promedio_allPatients.z(indices_ideal);
+%porque promedio_allPatients es un struct 
+promedio_allPatients_norm = NormalizarFunctionCompareICurve(promedio_allPatients, 0, 100);
 
 
-
-% figure
-% plot(x_trozo_ideal, y_trozo_x_ideal)
 grid on
-% xlim([15.54, 25.5241])
 % graficar el trozo fragmentado de minerva
 figure
 subplot(3,1,1)
-% plot(x_trozo, y_trozo_x)
-plot(x_trozo_norm, y_trozo_x_norm)
+plot(dataMinerva_norm.time, dataMinerva_norm.x)
 grid on
 hold on
-% plot (x_trozo_ideal,y_trozo_x_ideal)
-plot(x_trozo_ideal_norm, y_trozo_x_ideal_norm)
-title ('comparativa en x')
-% xlim([21.93,24.93]);
+plot (promedio_allPatients_norm.time,promedio_allPatients_norm.x)
+title ('comparativa en x minerva')
 
-
+ 
 subplot(3,1,2)
-plot(x_trozo, y_trozo_y)
+plot(dataMinerva_norm.time, dataMinerva_norm.y)
 grid on
 hold on
-plot(x_trozo_ideal, y_trozo_y_ideal)
-title ('comparativa en y')
-% xlim([21.93,24.93]);
+plot(promedio_allPatients_norm.time, promedio_allPatients_norm.y)
+title ('comparativa en y minerva')
 
 subplot(3,1,3)
-plot(x_trozo, y_trozo_z)
+plot(dataMinerva_norm.time, dataMinerva_norm.z)
 grid on
 hold on
-plot(x_trozo_ideal,y_trozo_z_ideal)
-title ('comparativa en z')
-% xlim([21.93,24.93]);
+plot(promedio_allPatients_norm.time,promedio_allPatients_norm.z)
+title ('comparativa en z minerva')
 
+% graficar el trozo fragmentado de victor
+figure
+grid on
+subplot(3,1,1)
+plot(dataVictor_norm.time, dataVictor_norm.x)
+grid on
+hold on
+plot (promedio_allPatients_norm.time,promedio_allPatients_norm.x)
+title ('comparativa en x victor')
 
+ 
+subplot(3,1,2)
+plot(dataVictor_norm.time, dataVictor_norm.y)
+grid on
+hold on
+plot(promedio_allPatients_norm.time, promedio_allPatients_norm.y)
+title ('comparativa en y victor')
+
+subplot(3,1,3)
+plot(dataVictor_norm.time, dataVictor_norm.z)
+grid on
+hold on
+plot(promedio_allPatients_norm.time,promedio_allPatients_norm.z)
+title ('comparativa en z victor')
+%DBERIA PONER LOS MAXIMOS Y LOS MINIMOS EN ESTAS GRAFICAS, QUIZA MAS A MANO
+%AL SER DOS SOLAS
+% PONGO LEYENDA ENTONCES EN LA GUI??
+
+% EN LA PLANTILLA DONDE ESTOY ESCRIBIENDO TODO HASTA AHORA NO SALE EL
+% BUDGET EN EL INDICE
