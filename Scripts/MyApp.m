@@ -1,4 +1,6 @@
-function MyApp(promedio_all, samples, promedio_allPatients)
+% function MyApp(promedio_all, samples, promedio_allPatients)
+function MyApp(promedio_all, samples, promedio_allPatients_gui)
+
 
 %     %cargar resultados necesarios para plotear en la GUI
 %     load('C:\Users\almud\Desktop\GIT\TFG\gyroData\gyroDataNew\Results_TFG.mat');
@@ -243,9 +245,11 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             % unico que no depende es de los pacientes, de la localizacion
             % y variable)
 
-            newXData_prom_all = promedio_allPatients.time;
-            newYData4_prom_all = promedio_allPatients.x;
-            plot(axes4,newXData_prom, newYData4_prom, 'k-','LineWidth',1.75);
+%             newXData_prom_all = promedio_allPatients.time;
+%             newYData4_prom_all = promedio_allPatients.x;
+            newXData_prom_all = promedio_allPatients_gui.(Sport).(Angle).(Location).time;
+            newYData4_prom_all = promedio_allPatients_gui.(Sport).(Angle).(Location).x;
+            curva_promx = plot(axes4,newXData_prom, newYData4_prom, 'k-','LineWidth',1.75, 'DisplayName',strcat(Patient_value, ' x-coordinate'));
             ylim (axes4, [-50 50]);
 
 
@@ -271,7 +275,7 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
 
 
             % representación curva ideal
-            plot(axes4,newXData_prom_all,newYData4_prom_all,'r-','LineWidth',1.75);
+            curva_estandarx = plot(axes4,newXData_prom_all,newYData4_prom_all,'r-','LineWidth',1.75, 'DisplayName','Standard Curve for x');
             hold(axes4, "on")
 
     
@@ -321,19 +325,23 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
                 titleLocation = 'Suprapatellar Area';
             end
             title (axes4, strcat([title_variable, ' ', titleCoordinate, ' Squats ' ,  titleLocation, ' Right Knee']))
+            legend([curva_promx,curva_estandarx],'Location','best');
 
             % axes5
             newYData5_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).y;
+            newXData_prom_all = promedio_allPatients_gui.(Sport).(Angle).(Location).time;
+            newYData5_prom_all = promedio_allPatients_gui.(Sport).(Angle).(Location).y;
 
-            plot(axes5,newXData_prom, newYData5_prom, 'k-','LineWidth',1.75);
+            curva_promy = plot(axes5,newXData_prom, newYData5_prom, 'k-','LineWidth',1.75, 'DisplayName',strcat(Patient_value, ' y-coordinate'));
             
+            
+            threshold_max = 0.8;            
             % máximos curva promedio de cada persona para y
             [peaks2, peakIndices2] = findpeaks(newYData5_prom);
             filteredPeaks2 = peaks2(peaks2 > threshold_max*max(peaks2));
             filteredPeakIndices2 = peakIndices2(peaks2 > threshold_max*max(peaks2));
             hold(axes5, "on")
             plot(axes5, newXData_prom(filteredPeakIndices2), filteredPeaks2, 'bo', 'MarkerSize', 10,'LineWidth',1.75 );
-
 
             % mínimos curva promedio de cada persona para y
             threshold_y_min= 0.8;
@@ -344,15 +352,11 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             hold(axes5, "on")
             plot(axes5, newXData_prom(filteredPeakIndices_min2), filteredPeaks_min2, 'bo', 'MarkerSize', 10, 'LineWidth',1.75)
 
-
-            newXData_prom_all = promedio_allPatients.time;
-            newYData5_prom_all = promedio_allPatients.y;
-
-            % representacion curva ideal
-            plot(axes5,newXData_prom_all,newYData5_prom_all,'r-','LineWidth',1.75);
             hold(axes5, "on")
-            ylim (axes5, [-100 100]);
-
+        
+            % representacion curva ideal
+           curva_estandary =  plot(axes5,newXData_prom_all,newYData5_prom_all,'r-','LineWidth',1.75, 'DisplayName','Standard Curve for y');
+            hold(axes5, "on")
     
             % máximos curva ideal para y
             [peaks3, peakIndices3] = findpeaks(newYData5_prom_all);
@@ -369,10 +373,8 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             hold(axes5, "on")
             plot(axes5, newXData_prom_all(filteredPeakIndices_min3), filteredPeaks_min3, 'gx', 'MarkerSize', 10, 'LineWidth',1.75)
 
-
             % para ejes y titulo
             xlabel (axes5, 'Time (s)')
-
             % ylabel según variable
             if strcmp(Variable_value, 'Gyroscope')
                 ylabel(axes5,'Angular velocity in y (deg/s)')
@@ -393,7 +395,7 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             else
                 titleCoordinate = 'Roll';
             end
-
+            ylim (axes5, [-60 60]);
             % title según localización
             if strcmp(Location_value, 'Lateral (External) Collateral Ligament')
                 titleLocation = 'Lateral (External) Collateral Ligament';
@@ -402,11 +404,12 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
                 titleLocation = 'Suprapatellar Area';
             end
             title (axes5, strcat([title_variable, ' ', titleCoordinate, ' Squats ' ,  titleLocation, ' Right Knee']))
+            legend([curva_promy,curva_estandary],'Location','best');
 
 
             % axes6
-            newYData6_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).x;
-            plot(axes6,newXData_prom, newYData6_prom, 'k-','LineWidth',1.75);
+            newYData6_prom = promedio_all.(Patient_value).(Sport).(Angle).(Location).z;
+            curva_promz = plot(axes6,newXData_prom, newYData6_prom, 'k-','LineWidth',1.75, 'DisplayName',strcat(Patient_value, ' z-coordinate'));
             
 
             threshold_z = 0.6;
@@ -429,11 +432,11 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             hold(axes6, "on")
             plot(axes6, newXData_prom(filteredPeakIndices_min4), filteredPeaks_min4, 'bo', 'MarkerSize', 10, 'LineWidth',1.75)
 
-            newXData_prom_all = promedio_allPatients.time;
-            newYData6_prom_all = promedio_allPatients.z;
+            newXData_prom_all = promedio_allPatients_gui.(Sport).(Angle).(Location).time;
+            newYData6_prom_all = promedio_allPatients_gui.(Sport).(Angle).(Location).z;
 
-            % representacion curva ideal
-            plot(axes6,newXData_prom_all,newYData6_prom_all,'r-','LineWidth',1.75);
+            %% representacion curva ideal
+            curva_estandarz = plot(axes6,newXData_prom_all,newYData6_prom_all,'r-','LineWidth',1.75, 'DisplayName','Standard curve for z');
 
              % máximos curva ideal para z
             [peaks5, peakIndices5] = findpeaks(newYData6_prom_all);
@@ -479,10 +482,15 @@ dropdown2.ValueChangedFcn = @(src, event) updatePlotsUsersColumn2(src.Value, axe
             % title según localización
             if strcmp(Location_value, 'Lateral (External) Collateral Ligament')
                 titleLocation = 'Lateral (External) Collateral Ligament';
+                ylim (axes6, [-50 50]);
             else
                 titleLocation = 'Suprapatellar Area';
+                ylim (axes6, [-20 20]);
+                            
+
             end
             title (axes6, strcat([title_variable, ' ', titleCoordinate, ' Squats ' ,  titleLocation, ' Right Knee']))
+            legend([curva_promz,curva_estandarz],'Location','best');
 
         hold (axes4, 'off');
         hold (axes5, 'off');

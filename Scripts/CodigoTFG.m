@@ -458,6 +458,17 @@ for iSportType = 1:numel(sportList)
             end
 
 
+%             promedio_allPatients = promedioAllFunction(prom_total); % llamo a la función que hace el promedio de promedios
+%             subplot(3,1,1)
+%             plot(promedio_allPatients.time ,promedio_allPatients.x,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
+%             legend('show','AutoUpdate','off');
+%             subplot(3,1,2)
+%             plot(promedio_allPatients.time ,promedio_allPatients.y,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
+%             legend('show','AutoUpdate','off');
+%             subplot(3,1,3)
+%             plot(promedio_allPatients.time ,promedio_allPatients.z,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
+%             legend('show','AutoUpdate','off');
+
             promedio_allPatients = promedioAllFunction(prom_total); % llamo a la función que hace el promedio de promedios
             subplot(3,1,1)
             plot(promedio_allPatients.time ,promedio_allPatients.x,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
@@ -469,7 +480,7 @@ for iSportType = 1:numel(sportList)
             plot(promedio_allPatients.time ,promedio_allPatients.z,'k-','LineWidth',1.75, 'DisplayName', 'Total Average')
             legend('show','AutoUpdate','off');
 
-
+            promedio_allPatients_gui.(Sport).(AngleType).(LocationType) = promedio_allPatients;
 
         end
     end
@@ -482,7 +493,7 @@ end
 % COORDENADA X
 % Guardo en un .mat la coordenada x de cada muestra y el promedio de todas
 % ellas
-save (fullfile(dataFolder_all,'Results_TFG.mat'), 'samples', 'promedio_all', 'promedio_allPatients')
+save (fullfile(dataFolder_all,'Results_TFG.mat'), 'samples', 'promedio_all', 'promedio_allPatients', "promedio_allPatients_gui")
 
 %% Comparativa curva ideal con curvas minerva y victor
 %aislar primero la curva ideal y luego el fragmento lo represento en lo
@@ -648,7 +659,7 @@ threshold_x_min2= 0.9;
 minPeaksMinerva2 = -minPeaksMinerva2;
 filteredPeaks_minMinerva2 = minPeaksMinerva2(minPeaksMinerva2 < threshold_x_min2*min(minPeaksMinerva2));
 filteredPeakIndices_minMinerva2 = minPeakIndicesMinerva2(minPeaksMinerva2 < threshold_x_min2*min(minPeaksMinerva2));
-plot(dataMinerva_norm.time(filteredPeakIndices_minMinerva2), filteredPeaks_minMinerva2, 'gx', 'MarkerSize', 10, 'LineWidth',1.75)
+plot(dataMinerva_norm.time(filteredPeakIndices_minMinerva2), filteredPeaks_minMinerva2, 'bo', 'MarkerSize', 10, 'LineWidth',1.75)
 hold on
 
 grid on
@@ -780,10 +791,149 @@ ylabel('Angular velocity in z (deg/s)')
 legend([curva_promzV,curva_estandarz],'Location','best');
 
 
+%% Curvas S11
 
+% S11
+% Leer el archivo CSV
+datosS11 = readmatrix('SGDM2S11_PM _MetaWear nuevo_2023-05-26T21.12.18.356_DFE264DC19EA_Gyroscope_100.000Hz_1.7.3.csv');
+
+figure
+% Extraer las columnas de interés
+dataS11.time = datosS11(:, 3);
+dataS11.x = datosS11(:, 4);
+dataS11.y = datosS11(:,5);
+dataS11.z = datosS11(:,6);
+
+%definir el rango deseado en el eje x para S11
+rango_time_inicioS11 = 4.49 ;
+rango_time_finS11 = 7.49;
+
+
+% fragmentar el trozo deseado basado en el rango en el eje x
+indicesS11 = (dataS11.time>= rango_time_inicioS11) & (dataS11.time<= rango_time_finS11);
+dataS11.time = dataS11.time(indicesS11);
+dataS11.x = dataS11.x(indicesS11);
+dataS11.y = dataS11.y(indicesS11);
+dataS11.z= dataS11.z(indicesS11);
+dataS11_norm = NormalizarFunctionCompareS11(dataS11,0,100);
+ 
+%aislo la curva ideal
+% definir el rango deseado en el eje x
+rango_time_inicio_ideal = 15.54;
+rango_time_fin_ideal = 25.5241;
+
+% fragmentar el trozo deseado basado en el rango en el eje x
+indices_ideal = (promedio_allPatients.time>= rango_time_inicio_ideal) & (promedio_allPatients.time<= rango_time_fin_ideal);
+promedio_allPatients.time = promedio_allPatients.time(indices_ideal);
+promedio_allPatients.x = promedio_allPatients.x(indices_ideal);
+promedio_allPatients.y = promedio_allPatients.y(indices_ideal);
+promedio_allPatients.z = promedio_allPatients.z(indices_ideal);
+%porque promedio_allPatients es un struct 
+promedio_allPatients_norm = NormalizarFunctionCompareICurve(promedio_allPatients, 0, 100);
+
+%graficar el trozo fragmentado de S11
+figure
+grid on
+subplot(3,1,1)
+curva_promxS11 = plot(dataS11_norm.time, dataS11_norm.x, 'k-', 'DisplayName','Subject 11 x-coordinate');
+threshold_max= 0.6;
+
+% máximos curva promedio de S11 x
+[peaksS11, peakIndicesS11] = findpeaks(dataS11_norm.x);
+filteredPeaksS11 = peaksS11(peaksS11 > threshold_max*max(peaksS11));
+filteredPeakIndicesS11 = peakIndicesS11(peaksS11 > threshold_max*max(peaksS11));
+hold on
+plot(dataS11_norm.time(filteredPeakIndicesS11), filteredPeaksS11, 'bo', 'MarkerSize', 10, 'LineWidth',1.75);
+% mínimos curva promedio de S11 x
+% threshold_x_min= 0.6;
+[minPeaksS11, minPeakIndicesS11] = findpeaks(-dataS11_norm.x);
+minPeaksS11 = -minPeaksS11;
+filteredPeaks_minS11 = minPeaksS11(minPeaksS11 < threshold_x_min*min(minPeaksS11));
+filteredPeakIndices_minS11 = minPeakIndicesS11(minPeaksS11 < threshold_x_min*min(minPeaksS11));
+hold on
+plot(dataS11_norm.time(filteredPeakIndices_minS11), filteredPeaks_minS11, 'bo', 'MarkerSize', 10, 'LineWidth',1.75)
+
+grid on
+hold on
+curva_estandarx = plot (promedio_allPatients_norm.time,promedio_allPatients_norm.x, 'r-','DisplayName','Standard curve for x');
+ % máximos curva ideal aislada x
+% [peaksIdeal, peakIndicesIdeal] = findpeaks(promedio_allPatients_norm.x);
+% filteredPeaksIdeal = peaksIdeal(peaksIdeal > threshold_max*max(peaksIdeal));
+% filteredPeakIndicesIdeal = peakIndicesIdeal(peaksIdeal > threshold_max*max(peaksIdeal));
+hold on
+plot(promedio_allPatients_norm.time(filteredPeakIndicesIdeal), filteredPeaksIdeal, 'gx', 'MarkerSize', 10, 'LineWidth',1.75);
+% mínimos curva ideal aislada x
+% threshold_x_min= 0.8;
+% [minPeaksIdeal, minPeakIndicesIdeal] = findpeaks(-promedio_allPatients_norm.x);
+% minPeaksIdeal = -minPeaksIdeal;
+% filteredPeaks_minIdeal = minPeaksIdeal(minPeaksIdeal < threshold_x_min*min(minPeaksIdeal));
+% filteredPeakIndices_minIdeal = minPeakIndicesIdeal(minPeaksIdeal < threshold_x_min*min(minPeaksIdeal));
+hold on
+plot(promedio_allPatients_norm.time(filteredPeakIndices_minIdeal), filteredPeaks_minIdeal, 'gx', 'MarkerSize', 10, 'LineWidth',1.75)
+xlabel('Time (s)')
+ylabel('Angular velocity in x (deg/s)')
+title ('Comparative analysis x-coordinate patient with non-athlete')
+legend([curva_promxS11,curva_estandarx],'Location','best');
+
+ 
+subplot(3,1,2)
+curva_promyS11 = plot(dataS11_norm.time, dataS11_norm.y,'k-', 'DisplayName','Subject 11 y-coordinate');
+% máximos curva promedio de S11 y
+[peaksS111, peakIndicesS111] = findpeaks(dataS11_norm.y);
+filteredPeaksS111 = peaksS111(peaksS111 > threshold_max*max(peaksS111));
+filteredPeakIndicesS111 = peakIndicesS111(peaksS111 > threshold_max*max(peaksS111));
+hold on
+plot(dataS11_norm.time(filteredPeakIndicesS111), filteredPeaksS111, 'bo', 'MarkerSize', 10, 'LineWidth',1.75);
+% mínimos curva promedio de S11 y
+% threshold_x_min= 0.60;
+[minPeaksS111, minPeakIndicesS111] = findpeaks(-dataS11_norm.y);
+minPeaksS111 = -minPeaksS111;
+filteredPeaks_minS111 = minPeaksS111(minPeaksS111 < threshold_x_min*min(minPeaksS111));
+filteredPeakIndices_minS111 = minPeakIndicesS111(minPeaksS111 < threshold_x_min*min(minPeaksS111));
+hold on
+plot(dataS11_norm.time(filteredPeakIndices_minS111), filteredPeaks_minS111, 'bo', 'MarkerSize', 10, 'LineWidth',1.75)
+
+grid on
+hold on
+curva_estandary = plot(promedio_allPatients_norm.time, promedio_allPatients_norm.y,'r-', 'DisplayName','Standard curve for y');
+hold on
+plot(promedio_allPatients_norm.time(filteredPeakIndicesIdeal1), filteredPeaksIdeal1, 'gx', 'MarkerSize', 10, 'LineWidth',1.75);
+hold on
+plot(promedio_allPatients_norm.time(filteredPeakIndices_minIdeal1), filteredPeaks_minIdeal1, 'gx', 'MarkerSize', 10, 'LineWidth',1.75)
+title ('Comparative analysis y-coordinate patient with non-athlete')
+xlabel('Time (s)')
+ylabel('Angular velocity in y (deg/s)')
+legend([curva_promyS11,curva_estandary],'Location','best');
+
+subplot(3,1,3)
+curva_promzS11 = plot(dataS11_norm.time, dataS11_norm.z, 'k-', 'DisplayName','Subject 11 z-coordinate');
+% máximos curva promedio de S11 z
+[peaksS112, peakIndicesS112] = findpeaks(dataS11_norm.z);
+filteredPeaksS112 = peaksS112(peaksS112 > threshold_max*max(peaksS112));
+filteredPeakIndicesS112 = peakIndicesS112(peaksS112 > threshold_max*max(peaksS112));
+hold on
+plot(dataS11_norm.time(filteredPeakIndicesS112), filteredPeaksS112, 'bo', 'MarkerSize', 10, 'LineWidth',1.75);
+% mínimos curva promedio de S11 z
+% threshold_x_min= 0.60;
+[minPeaksS112, minPeakIndicesS112] = findpeaks(-dataS11_norm.z);
+minPeaksS112 = -minPeaksS112;
+filteredPeaks_minS112 = minPeaksS112(minPeaksS112 < threshold_x_min*min(minPeaksS112));
+filteredPeakIndices_minS112 = minPeakIndicesS112(minPeaksS112 < threshold_x_min*min(minPeaksS112));
+hold on
+plot(dataS11_norm.time(filteredPeakIndices_minS112), filteredPeaks_minS112, 'bo', 'MarkerSize', 10, 'LineWidth',1.75)
+
+grid on
+hold on
+curva_estandarz = plot(promedio_allPatients_norm.time,promedio_allPatients_norm.z, 'r-','DisplayName', 'Standard curve for z');
+hold on
+plot(promedio_allPatients_norm.time(filteredPeakIndicesIdeal2), filteredPeaksIdeal2, 'gx', 'MarkerSize', 10, 'LineWidth',1.75);
+hold on
+plot(promedio_allPatients_norm.time(filteredPeakIndices_minIdeal2), filteredPeaks_minIdeal2, 'gx', 'MarkerSize', 10, 'LineWidth',1.75)
+
+title ('Comparative analysis z-coordinate patient with non-athlete')
+xlabel('Time (s)')
+ylabel('Angular velocity in z (deg/s)')
+legend([curva_promzS11,curva_estandarz],'Location','best');
 
 
 % PONGO LEYENDA ENTONCES EN LA GUI??
-
-% EN LA PLANTILLA DONDE ESTOY ESCRIBIENDO TODO HASTA AHORA NO SALE EL
-% BUDGET EN EL INDICE
